@@ -1,6 +1,7 @@
 package com.oocl.parking;
 
 import com.oocl.parking.domain.ParkingClerk;
+import com.oocl.parking.models.ParkingClerkResponse;
 import com.oocl.parking.repositories.ParkingClerkRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,7 +44,7 @@ public class ParkingClerkTest {
         final MvcResult result = mvc.perform(get("/parkingclerks")).andReturn();
         //t
         assertEquals(200, result.getResponse().getStatus());
-
+        //final ParkingClerkResponse[] responses = getContentAsObject(result, ParkingClerkResponse[].class);
 
     }
 }
