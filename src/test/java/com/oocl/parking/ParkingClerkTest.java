@@ -11,6 +11,6 @@ public class ParkingClerkTest {
     public void test()
     {
         ParkingClerk clerk = new ParkingClerk("Test1");
-        assertEquals("Test1", clerk.getAccountname());
+        assertEquals("Test1", clerk.getAccountName());
     }
 }

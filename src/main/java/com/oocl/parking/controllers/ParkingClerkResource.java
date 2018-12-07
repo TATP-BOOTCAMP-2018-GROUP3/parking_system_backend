@@ -23,7 +23,7 @@ public class ParkingClerkResource {
 
     @PostMapping(consumes = "application/json")
     public ResponseEntity add(@RequestBody ParkingClerk clerk){
-        parkingClerkRepository.saveAndFlush(clerk);
+        parkingClerkRepository.save(clerk);
         return ResponseEntity.created(URI.create("/parkingclerks/"+clerk.getId())).build();
     }
 }

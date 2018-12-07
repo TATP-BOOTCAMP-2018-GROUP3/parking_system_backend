@@ -8,25 +8,25 @@ import javax.persistence.*;
 public class ParkingClerk {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "account_name", unique = true)
-    private String accountname;
+    private String accountName;
 
-    protected ParkingClerk(){}
+    public ParkingClerk(){}
 
     public ParkingClerk(String name){
-        this.accountname = name;
+        this.accountName = name;
     }
 
 
-    public String getAccountname() {
-        return accountname;
+    public String getAccountName() {
+        return accountName;
     }
 
-    public void setAccountname(String accountname) {
-        this.accountname = accountname;
+    public void setAccountName(String accountName) {
+        this.accountName = accountName;
     }
 
     public Long getId() {
