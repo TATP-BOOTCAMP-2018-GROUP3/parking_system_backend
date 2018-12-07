@@ -41,11 +41,12 @@ public class ParkingClerkTest {
     {
         //g
         ParkingClerk clerk = new ParkingClerk("Test1");
+        parkingClerkRepository.saveAndFlush(clerk);
         //w
         final MvcResult result = mvc.perform(get("/parkingclerks")).andReturn();
         //t
         assertEquals(200, result.getResponse().getStatus());
         final ParkingClerkResponse[] responses = getContentAsObject(result, ParkingClerkResponse[].class);
-
+        assertEquals("Test1", responses[0].getAccountName());
     }
 }
