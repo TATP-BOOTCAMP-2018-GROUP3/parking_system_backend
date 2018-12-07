@@ -22,7 +22,7 @@ deploy:
   provider: heroku
   api_key:
     secure: c5359a19-f5ea-4a4b-938b-283501d8bd8b
-  app: parking_system_backend
+  app: parking-system-backend
   on:
     repo: TATP-BOOTCAMP-2018-GROUP3/parking_system_backend
 notifications:
