@@ -12,21 +12,21 @@ public class ParkingClerk {
     private Long id;
 
     @Column(name = "account_name", unique = true)
-    private String accountName;
+    private String accountname;
 
     protected ParkingClerk(){}
 
     public ParkingClerk(String name){
-        this.accountName = name;
+        this.accountname = name;
     }
 
 
-    public String getAccountName() {
-        return accountName;
+    public String getAccountname() {
+        return accountname;
     }
 
-    public void setAccountName(String accountName) {
-        this.accountName = accountName;
+    public void setAccountname(String accountname) {
+        this.accountname = accountname;
     }
 
     public Long getId() {
