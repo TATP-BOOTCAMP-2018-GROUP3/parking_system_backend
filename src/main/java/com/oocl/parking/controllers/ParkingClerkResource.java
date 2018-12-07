@@ -1,6 +1,7 @@
 package com.oocl.parking.controllers;
 
 import com.oocl.parking.domain.ParkingClerk;
+import com.oocl.parking.models.ParkingClerkResponse;
 import com.oocl.parking.repositories.ParkingClerkRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,8 +17,10 @@ public class ParkingClerkResource {
     private ParkingClerkRepository parkingClerkRepository;
 
     @GetMapping
-    public ResponseEntity<List<ParkingClerk>> getAll(){
-        final List<ParkingClerk> clerks = parkingClerkRepository.findAll();
+    public ResponseEntity<ParkingClerkResponse[]> getAll(){
+        final ParkingClerkResponse[] clerks = parkingClerkRepository.findAll().stream()
+                .map(ParkingClerkResponse::create)
+                .toArray(ParkingClerkResponse[]::new);
         return ResponseEntity.ok(clerks);
     }
 
