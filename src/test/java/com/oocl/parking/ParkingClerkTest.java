@@ -1,5 +1,6 @@
 package com.oocl.parking;
 
+import com.oocl.parking.domain.ParkingClerk;
 import org.junit.Test;
 
 import static junit.framework.Assert.assertTrue;
