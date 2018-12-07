@@ -11,6 +11,7 @@ import java.net.URI;
 import java.util.List;
 
 @RestController
+@CrossOrigin
 @RequestMapping("/parkingclerks")
 public class ParkingClerkResource {
     @Autowired
