@@ -16,7 +16,7 @@ public class ParkingOrder {
     private String parkingLot;
 
     @Column(name = "status")
-    private String status;
+    private String status = "";
 
     public ParkingOrder(){}
     public ParkingOrder(String carId, String parkingLot){
@@ -45,5 +45,9 @@ public class ParkingOrder {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public Long getId() {
+        return id;
     }
 }

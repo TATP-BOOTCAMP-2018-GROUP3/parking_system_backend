@@ -49,4 +49,18 @@ public class ParkingOrderTest {
         assertEquals("Car1", responses[0].getCarId());
         assertEquals("TempTest1", responses[0].getParkingLot());
     }
+
+    @Test
+    public void get_order_by_id_test() throws Exception{
+        //g
+        ParkingOrder order = new ParkingOrder("Car2", "TempTest2");
+        parkingOrderRepository.saveAndFlush(order);
+        //w
+        final MvcResult result = mvc.perform(get("/orders/"+order.getId())).andReturn();
+        //t
+        assertEquals(200, result.getResponse().getStatus());
+        final ParkingOrderResponse response = getContentAsObject(result, ParkingOrderResponse.class);
+        assertEquals("Car2", response.getCarId());
+        assertEquals("TempTest2", response.getParkingLot());
+    }
 }
