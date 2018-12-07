@@ -5,6 +5,8 @@ sudo: false
 cache:
   directories:
     - $HOME/.gradle
+before_script:
+    - chmod +x gradlew
 script:
   - ./gradlew clean
   - ./gradlew test
