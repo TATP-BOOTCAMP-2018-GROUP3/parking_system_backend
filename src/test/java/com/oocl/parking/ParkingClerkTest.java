@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import static com.oocl.parking.WebTestUtil.getContentAsObject;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -44,7 +45,7 @@ public class ParkingClerkTest {
         final MvcResult result = mvc.perform(get("/parkingclerks")).andReturn();
         //t
         assertEquals(200, result.getResponse().getStatus());
-        //final ParkingClerkResponse[] responses = getContentAsObject(result, ParkingClerkResponse[].class);
+        final ParkingClerkResponse[] responses = getContentAsObject(result, ParkingClerkResponse[].class);
 
     }
 }
