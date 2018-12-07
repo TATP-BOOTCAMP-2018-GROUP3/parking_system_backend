@@ -37,6 +37,7 @@ public class ParkingOrderResponse {
     private static ParkingOrderResponse create(String carId, String parkingLot, String status)
     {
         Objects.requireNonNull(carId);
+        Objects.requireNonNull(parkingLot);
         final ParkingOrderResponse response = new ParkingOrderResponse();
         response.setCarId(carId);
         response.setParkingLot(parkingLot);

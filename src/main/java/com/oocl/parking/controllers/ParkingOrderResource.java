@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.swing.text.html.Option;
+import java.net.URI;
 import java.util.Optional;
 
 @RestController
@@ -36,5 +37,12 @@ public class ParkingOrderResource {
         final ParkingOrderResponse response = ParkingOrderResponse.create(order.get());
         return ResponseEntity.ok(response);
     }
+
+    @PostMapping(consumes = "application/json")
+    public ResponseEntity add(@RequestBody ParkingOrder order){
+        parkingOrderRepository.save(order);
+        return ResponseEntity.created(URI.create("/orders/"+order.getId())).build();
+    }
+
 
 }
