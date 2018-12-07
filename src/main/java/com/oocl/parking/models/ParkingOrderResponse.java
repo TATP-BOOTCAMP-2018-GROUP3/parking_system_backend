@@ -46,6 +46,6 @@ public class ParkingOrderResponse {
     }
     public static ParkingOrderResponse create(ParkingOrder entity)
     {
-        return create(entity.getCarId(),entity.getParkingLot(),entity.getParkingLot());
+        return create(entity.getCarId(),entity.getParkingLot(),entity.getStatus());
     }
 }

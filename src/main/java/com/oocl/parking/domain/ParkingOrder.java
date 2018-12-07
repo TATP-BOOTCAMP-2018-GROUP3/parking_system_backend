@@ -16,12 +16,18 @@ public class ParkingOrder {
     private String parkingLot;
 
     @Column(name = "status")
-    private String status = "";
+    private String status = "Default";
 
     public ParkingOrder(){}
     public ParkingOrder(String carId, String parkingLot){
         this.carId = carId;
         this.parkingLot = parkingLot;
+        this.status = "Default";
+    }
+    public ParkingOrder(String carId, String parkingLot, String status){
+        this.carId = carId;
+        this.parkingLot = parkingLot;
+        this.status = status;
     }
 
     public void setCarId(String carId){
