@@ -28,4 +28,8 @@ public class ParkingClerk {
     public void setAccountName(String accountName) {
         this.accountName = accountName;
     }
+
+    public Long getId() {
+        return id;
+    }
 }
