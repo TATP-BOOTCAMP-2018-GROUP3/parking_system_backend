@@ -12,8 +12,8 @@ public class Order {
     @Column(name = "car_Id")
     private String carId;
 
-    @Column(name = "parking_lot_id")
-    private int parkingLotId;
+    @Column(name = "parking_lot")
+    private String parkingLot;
 
     @Column(name = "status")
     private String status;
@@ -30,12 +30,12 @@ public class Order {
         return carId;
     }
 
-    public int getParkingLotId() {
-        return parkingLotId;
+    public String getParkingLot() {
+        return parkingLot;
     }
 
-    public void setParkingLotId(int parkingLotId) {
-        this.parkingLotId = parkingLotId;
+    public void setParkingLot(String parkingLot) {
+        this.parkingLot = parkingLot;
     }
 
     public String getStatus() {
