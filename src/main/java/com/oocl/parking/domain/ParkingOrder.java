@@ -19,8 +19,9 @@ public class ParkingOrder {
     private String status;
 
     public ParkingOrder(){}
-    public ParkingOrder(String carId){
+    public ParkingOrder(String carId, String parkingLot){
         this.carId = carId;
+        this.parkingLot = parkingLot;
     }
 
     public void setCarId(String carId){
