@@ -9,6 +9,11 @@ public class ParkingOrder {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    public void setId(Long id)
+    {
+        this.id = id;
+    }
+
     @Column(name = "car_Id")
     private String carId;
 

@@ -43,6 +43,15 @@ public class ParkingOrderResource {
         parkingOrderRepository.save(order);
         return ResponseEntity.created(URI.create("/orders/"+order.getId())).build();
     }
-
+    @PutMapping(value = "/{id}", consumes = "application/json")
+    public ResponseEntity<ParkingOrder> updateOrder(@RequestBody ParkingOrder order, @PathVariable Long id)
+    {
+        Optional<ParkingOrder> thisOrder = parkingOrderRepository.findById(id);
+        if (!thisOrder.isPresent())
+            return ResponseEntity.notFound().build();
+        order.setId(id);
+        parkingOrderRepository.save(order);
+        return ResponseEntity.noContent().build();
+    }
 
 }
