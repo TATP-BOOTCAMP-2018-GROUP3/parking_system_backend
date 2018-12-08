@@ -20,6 +20,7 @@ import static com.oocl.parking.WebTestUtil.getContentAsObject;
 import static junit.framework.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -77,6 +78,27 @@ public class ParkingOrderTest {
         //t
         assertEquals(201, result.getResponse().getStatus());
         assertEquals("Car3", parkingOrderRepository.findAll().get(0).getCarId());
+
+    }
+
+    @Test
+    public void put_order_change_test() throws Exception{
+        //g
+        String orderJson = "{\"carId\":\"Car4\",\"parkingLot\":\"TempTest4\"}";
+        MvcResult result = mvc.perform(post("/orders")
+                .contentType(MediaType.APPLICATION_JSON).content(orderJson)).andReturn();
+
+        Long id = parkingOrderRepository.findAll().get(0).getId();
+        String putJson = "{\"carId\":\"Car5\",\"parkingLot\":\"TempTest5\"}";
+        //w
+        result = mvc.perform(put("/orders/"+id)
+                .contentType(MediaType.APPLICATION_JSON).content(putJson)).andReturn();
+
+        //t
+        assertEquals(200, result.getResponse().getStatus());
+        assertEquals("Car5", parkingOrderRepository.findAll().get(0).getCarId());
+
+
 
     }
 }

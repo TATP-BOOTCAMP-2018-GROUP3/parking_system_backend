@@ -51,7 +51,7 @@ public class ParkingOrderResource {
             return ResponseEntity.notFound().build();
         order.setId(id);
         parkingOrderRepository.save(order);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().build();
     }
 
 }
