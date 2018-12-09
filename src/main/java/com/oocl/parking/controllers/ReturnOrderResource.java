@@ -69,7 +69,7 @@ public class ReturnOrderResource {
             return ResponseEntity.badRequest().build();
         }
         returnOrderRepository.saveAndFlush(order);
-        return ResponseEntity.created(URI.create("/orders/"+order.getId())).build();
+        return ResponseEntity.created(URI.create("/orders/"+order.getId())).header("Access-Control-Expose-Headers", "Location").build();
     }
 
     @PatchMapping(value = "/{id}", consumes = "application/json")

@@ -51,7 +51,7 @@ public class ParkingOrderResource {
     @PostMapping(consumes = "application/json")
     public ResponseEntity add(@RequestBody ParkingOrder order){
         parkingOrderRepository.save(order);
-        return ResponseEntity.created(URI.create("/orders/"+order.getId())).build();
+        return ResponseEntity.created(URI.create("/orders/"+order.getId())).header("Access-Control-Expose-Headers", "Location").build();
     }
 
     @PutMapping(value = "/{id}", consumes = "application/json")
