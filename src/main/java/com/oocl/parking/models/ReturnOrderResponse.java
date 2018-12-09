@@ -7,6 +7,7 @@ import java.util.Objects;
 
 public class ReturnOrderResponse {
     private Long id;
+    private Long parkingOrderId;
     private String carId;
     private String parkingLot;
     private String phoneNumber;
@@ -19,6 +20,14 @@ public class ReturnOrderResponse {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getParkingOrderId() {
+        return parkingOrderId;
+    }
+
+    public void setParkingOrderId(Long parkingOrderId) {
+        this.parkingOrderId = parkingOrderId;
     }
 
     public String getCarId() {
@@ -61,10 +70,11 @@ public class ReturnOrderResponse {
         this.ownedByEmployeeId = ownedByEmployeeId;
     }
 
-    private static ReturnOrderResponse create(Long id, String phoneNumber, String status, String carId, String parkingLot, Long ownedByEmployeeId)
+    private static ReturnOrderResponse create(Long id, String phoneNumber, String status, Long parkingOrderId, String carId, String parkingLot, Long ownedByEmployeeId)
     {
         Objects.requireNonNull(id);
         Objects.requireNonNull(phoneNumber);
+        Objects.requireNonNull(parkingOrderId);
         Objects.requireNonNull(carId);
         Objects.requireNonNull(parkingLot);
         Objects.requireNonNull(ownedByEmployeeId);
@@ -75,11 +85,12 @@ public class ReturnOrderResponse {
         response.setPhoneNumber(phoneNumber);
         response.setOwnedByEmployeeId(ownedByEmployeeId);
         response.setStatus(status);
+        response.setParkingOrderId(parkingOrderId);
         return response;
     }
     public static ReturnOrderResponse create(ReturnOrder returnOrder, ParkingOrder parkingOrder)
     {
-        return create(returnOrder.getId(), returnOrder.getPhoneNumber(), returnOrder.getStatus(),
+        return create(returnOrder.getId(), returnOrder.getPhoneNumber(), returnOrder.getStatus(), returnOrder.getParkingOrderId(),
                 parkingOrder.getCarId(), parkingOrder.getParkingLot(), parkingOrder.getOwnedByEmployeeId());
     }
 }
