@@ -1,0 +1,1 @@
+alter table if exists parking_order add column if not exists owned_by_employee_id bigint default null

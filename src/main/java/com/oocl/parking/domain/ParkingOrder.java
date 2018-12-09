@@ -21,6 +21,9 @@ public class ParkingOrder {
     @Column(name = "phone_number")
     private String phoneNumber;
 
+    @Column(name = "owned_by_employee_id")
+    private Long ownedByEmployeeId;
+
     public ParkingOrder(){
         this.status = "Pending";
     }
@@ -77,5 +80,13 @@ public class ParkingOrder {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public Long getOwnedByEmployeeId() {
+        return ownedByEmployeeId;
+    }
+
+    public void setOwnedByEmployeeId(Long ownedByEmployeeId) {
+        this.ownedByEmployeeId = ownedByEmployeeId;
     }
 }

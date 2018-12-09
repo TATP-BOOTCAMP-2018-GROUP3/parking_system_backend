@@ -8,6 +8,7 @@ public class ParkingOrderResponse {
     private String carId;
     private String parkingLot;
     private String phoneNumber;
+    private Long ownedByEmployeeId;
     private String status;
 
 
@@ -43,7 +44,15 @@ public class ParkingOrderResponse {
         this.phoneNumber = phoneNumber;
     }
 
-    private static ParkingOrderResponse create(String carId, String parkingLot, String phoneNumber, String status)
+    public Long getOwnedByEmployeeId() {
+        return ownedByEmployeeId;
+    }
+
+    public void setOwnedByEmployeeId(Long ownedByEmployeeId) {
+        this.ownedByEmployeeId = ownedByEmployeeId;
+    }
+
+    private static ParkingOrderResponse create(String carId, String parkingLot, String phoneNumber, Long ownedByEmployeeId, String status)
     {
         Objects.requireNonNull(carId);
         Objects.requireNonNull(phoneNumber);
@@ -51,11 +60,12 @@ public class ParkingOrderResponse {
         response.setCarId(carId);
         response.setParkingLot(parkingLot);
         response.setPhoneNumber(phoneNumber);
+        response.setOwnedByEmployeeId(ownedByEmployeeId);
         response.setStatus(status);
         return response;
     }
     public static ParkingOrderResponse create(ParkingOrder entity)
     {
-        return create(entity.getCarId(), entity.getParkingLot(), entity.getPhoneNumber(), entity.getStatus());
+        return create(entity.getCarId(), entity.getParkingLot(), entity.getPhoneNumber(), entity.getOwnedByEmployeeId(), entity.getStatus());
     }
 }
