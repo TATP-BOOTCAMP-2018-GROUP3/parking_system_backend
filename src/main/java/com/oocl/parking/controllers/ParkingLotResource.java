@@ -43,4 +43,13 @@ public class ParkingLotResource {
         parkingLotRepository.save(lot);
         return ResponseEntity.ok().build();
     }
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity delete(@PathVariable Long id)
+    {
+        Optional<ParkingLot> thisLot = parkingLotRepository.findById(id);
+        if (!thisLot.isPresent())
+            return ResponseEntity.notFound().build();
+        parkingLotRepository.deleteById(id);
+        return ResponseEntity.ok().build();
+    }
 }
