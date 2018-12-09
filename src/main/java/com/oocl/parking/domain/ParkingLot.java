@@ -66,5 +66,9 @@ public class ParkingLot {
     public void setEmployee_id(String employee_id) {
         this.employee_id = employee_id;
     }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 }
 

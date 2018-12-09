@@ -72,16 +72,17 @@ public class ParkingLotTest {
     @Test
     public void put_lot_test() throws Exception{
         //g
-        parkingLotRepository.saveAndFlush(new ParkingLot("Old", 10));
+        String oldJson = "{\"parkingLotName\":\"Old\",\"capacity\":10}";
+        MvcResult result = mvc.perform(post("/parkinglots")
+                .contentType(MediaType.APPLICATION_JSON).content(oldJson)).andReturn();
         String lotJson = "{\"parkingLotName\":\"Lot3\",\"capacity\":1}";
 
         //w
         Long id = parkingLotRepository.findAll().get(0).getId();
-        final MvcResult result = mvc.perform(put("/parkinglots/"+id)
+        result = mvc.perform(put("/parkinglots/"+id)
                 .contentType(MediaType.APPLICATION_JSON).content(lotJson)).andReturn();
 
         //t
-        final ParkingLotResponse[] responses = getContentAsObject(result, ParkingLotResponse[].class);
         assertEquals(200, result.getResponse().getStatus());
         assertEquals("Lot3", parkingLotRepository.findAll().get(0).getParkingLotName());
         assertEquals(1, parkingLotRepository.findAll().get(0).getCapacity());

@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin
@@ -30,5 +31,16 @@ public class ParkingLotResource {
     public ResponseEntity add(@RequestBody ParkingLot lot){
         parkingLotRepository.save(lot);
         return ResponseEntity.created(URI.create("/parkinglots/"+lot.getId())).build();
+    }
+
+    @PutMapping(value = "/{id}", consumes = "application/json")
+    public ResponseEntity<ParkingLot> updateOrder(@RequestBody ParkingLot lot, @PathVariable Long id)
+    {
+        Optional<ParkingLot> thisLot = parkingLotRepository.findById(id);
+        if (!thisLot.isPresent())
+            return ResponseEntity.notFound().build();
+        lot.setId(id);
+        parkingLotRepository.save(lot);
+        return ResponseEntity.ok().build();
     }
 }
