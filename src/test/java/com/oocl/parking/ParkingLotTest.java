@@ -17,11 +17,12 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import java.util.Optional;
+
 import static com.oocl.parking.WebTestUtil.getContentAsObject;
 import static junit.framework.Assert.assertEquals;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static junit.framework.Assert.assertFalse;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -86,6 +87,24 @@ public class ParkingLotTest {
         assertEquals(200, result.getResponse().getStatus());
         assertEquals("Lot3", parkingLotRepository.findAll().get(0).getParkingLotName());
         assertEquals(1, parkingLotRepository.findAll().get(0).getCapacity());
+
+    }
+
+    @Test
+    public void delete_lot_test() throws Exception{
+        //g
+        String oldJson = "{\"parkingLotName\":\"Old\",\"capacity\":10}";
+        MvcResult result = mvc.perform(post("/parkinglots")
+                .contentType(MediaType.APPLICATION_JSON).content(oldJson)).andReturn();
+
+        //w
+        Long id = parkingLotRepository.findAll().get(0).getId();
+        result = mvc.perform(delete("/parkinglots/"+id)).andReturn();
+
+        //t
+        assertEquals(200, result.getResponse().getStatus());
+        Optional<ParkingLot> thisLot = parkingLotRepository.findById(id);
+        assertFalse(thisLot.isPresent());
 
     }
 
