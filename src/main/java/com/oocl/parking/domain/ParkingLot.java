@@ -9,12 +9,16 @@ public class ParkingLot {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "parking_lot_name")
     private String parkingLotName;
 
+    @Column(name = "capacity")
     private int capacity;
 
+    @Column(name = "available_position_count")
     private int availablePositionCount;
 
+    @Column(name = "employee_id")
     private String employee_id;
 
     public ParkingLot(){}
