@@ -45,7 +45,7 @@ public class ParkingLotTest {
         //t
         assertEquals(200, result.getResponse().getStatus());
         final ParkingLotResponse[] responses = getContentAsObject(result, ParkingLotResponse[].class);
-        assertEquals("Test1", responses[0].getName());
+        assertEquals("Test1", responses[0].getParkingLotName());
     }
 */
 
