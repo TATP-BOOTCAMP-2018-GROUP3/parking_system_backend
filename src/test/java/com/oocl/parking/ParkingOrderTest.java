@@ -42,7 +42,7 @@ public class ParkingOrderTest {
     @Test
     public void get_order_test() throws Exception {
         //g
-        ParkingOrder order = new ParkingOrder("Car1", "TempTest1");
+        ParkingOrder order = new ParkingOrder("Car1", "TempTest1", "12345678");
         parkingOrderRepository.saveAndFlush(order);
         //w
         final MvcResult result = mvc.perform(get("/orders")).andReturn();
@@ -56,7 +56,7 @@ public class ParkingOrderTest {
     @Test
     public void get_order_by_id_test() throws Exception{
         //g
-        ParkingOrder order = new ParkingOrder("Car2", "TempTest2");
+        ParkingOrder order = new ParkingOrder("Car2", "TempTest2", "12345678");
         parkingOrderRepository.saveAndFlush(order);
         //w
         final MvcResult result = mvc.perform(get("/orders/"+order.getId())).andReturn();
@@ -70,7 +70,7 @@ public class ParkingOrderTest {
     @Test
     public void post_order_test() throws Exception{
         //g
-        String orderJson = "{\"carId\":\"Car3\",\"parkingLot\":\"TempTest3\"}";
+        String orderJson = "{\"carId\":\"Car3\",\"parkingLot\":\"TempTest3\", \"phoneNumber\":\"12345678\"}";
         //w
         final MvcResult result = mvc.perform(post("/orders")
                 .contentType(MediaType.APPLICATION_JSON).content(orderJson)).andReturn();
@@ -84,14 +84,13 @@ public class ParkingOrderTest {
     @Test
     public void put_order_change_test() throws Exception{
         //g
-        String orderJson = "{\"carId\":\"Car4\",\"parkingLot\":\"TempTest4\"}";
-        MvcResult result = mvc.perform(post("/orders")
-                .contentType(MediaType.APPLICATION_JSON).content(orderJson)).andReturn();
+        String orderJson = "{\"carId\":\"Car4\",\"parkingLot\":\"TempTest4\", \"phoneNumber\":\"12345678\"}";
+        mvc.perform(post("/orders/").contentType(MediaType.APPLICATION_JSON).content(orderJson)).andReturn();
 
         Long id = parkingOrderRepository.findAll().get(0).getId();
-        String putJson = "{\"carId\":\"Car5\",\"parkingLot\":\"TempTest5\"}";
+        String putJson = "{\"carId\":\"Car5\",\"parkingLot\":\"TempTest5\", \"phoneNumber\":\"852-87654321\"}";
         //w
-        result = mvc.perform(put("/orders/"+id)
+        MvcResult result = mvc.perform(put("/orders/"+id)
                 .contentType(MediaType.APPLICATION_JSON).content(putJson)).andReturn();
 
         //t

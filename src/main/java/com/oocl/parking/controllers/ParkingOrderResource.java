@@ -27,6 +27,7 @@ public class ParkingOrderResource {
                 .toArray(ParkingOrderResponse[]::new);
         return ResponseEntity.ok(orders);
     }
+
     @GetMapping(path = "/{id}")
     public ResponseEntity<ParkingOrderResponse> get(@PathVariable Long id)
     {
@@ -43,6 +44,7 @@ public class ParkingOrderResource {
         parkingOrderRepository.save(order);
         return ResponseEntity.created(URI.create("/orders/"+order.getId())).build();
     }
+
     @PutMapping(value = "/{id}", consumes = "application/json")
     public ResponseEntity<ParkingOrder> updateOrder(@RequestBody ParkingOrder order, @PathVariable Long id)
     {

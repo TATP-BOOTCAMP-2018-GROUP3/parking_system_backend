@@ -9,11 +9,6 @@ public class ParkingOrder {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    public void setId(Long id)
-    {
-        this.id = id;
-    }
-
     @Column(name = "car_Id")
     private String carId;
 
@@ -21,25 +16,43 @@ public class ParkingOrder {
     private String parkingLot;
 
     @Column(name = "status")
-    private String status = "Default";
+    private String status;
 
-    public ParkingOrder(){}
-    public ParkingOrder(String carId, String parkingLot){
-        this.carId = carId;
-        this.parkingLot = parkingLot;
-        this.status = "Default";
+    @Column(name = "phone_number")
+    private String phoneNumber;
+
+    public ParkingOrder(){
+        this.status = "Pending";
     }
-    public ParkingOrder(String carId, String parkingLot, String status){
+
+    public ParkingOrder(String carId, String parkingLot, String phoneNumber){
         this.carId = carId;
         this.parkingLot = parkingLot;
+        this.phoneNumber = phoneNumber;
+        this.status = "Pending";
+    }
+
+    public ParkingOrder(String carId, String parkingLot, String status, String phoneNumber){
+        this.carId = carId;
+        this.parkingLot = parkingLot;
+        this.phoneNumber = phoneNumber;
         this.status = status;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id){
+        this.id = id;
+    }
+
+    public String getCarId() {
+        return carId;
     }
 
     public void setCarId(String carId){
         this.carId = carId;
-    }
-    public String getCarId() {
-        return carId;
     }
 
     public String getParkingLot() {
@@ -58,7 +71,11 @@ public class ParkingOrder {
         this.status = status;
     }
 
-    public Long getId() {
-        return id;
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 }
