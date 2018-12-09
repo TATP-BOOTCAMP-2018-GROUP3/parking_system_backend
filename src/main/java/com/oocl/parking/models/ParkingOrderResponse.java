@@ -5,12 +5,20 @@ import com.oocl.parking.domain.ParkingOrder;
 import java.util.Objects;
 
 public class ParkingOrderResponse {
+    private Long id;
     private String carId;
     private String parkingLot;
     private String phoneNumber;
     private Long ownedByEmployeeId;
     private String status;
 
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getCarId() {
         return carId;
@@ -52,11 +60,13 @@ public class ParkingOrderResponse {
         this.ownedByEmployeeId = ownedByEmployeeId;
     }
 
-    private static ParkingOrderResponse create(String carId, String parkingLot, String phoneNumber, Long ownedByEmployeeId, String status)
+    private static ParkingOrderResponse create(Long id, String carId, String parkingLot, String phoneNumber, Long ownedByEmployeeId, String status)
     {
+        Objects.requireNonNull(id);
         Objects.requireNonNull(carId);
         Objects.requireNonNull(phoneNumber);
         final ParkingOrderResponse response = new ParkingOrderResponse();
+        response.setId(id);
         response.setCarId(carId);
         response.setParkingLot(parkingLot);
         response.setPhoneNumber(phoneNumber);
@@ -66,6 +76,6 @@ public class ParkingOrderResponse {
     }
     public static ParkingOrderResponse create(ParkingOrder entity)
     {
-        return create(entity.getCarId(), entity.getParkingLot(), entity.getPhoneNumber(), entity.getOwnedByEmployeeId(), entity.getStatus());
+        return create(entity.getId(), entity.getCarId(), entity.getParkingLot(), entity.getPhoneNumber(), entity.getOwnedByEmployeeId(), entity.getStatus());
     }
 }
