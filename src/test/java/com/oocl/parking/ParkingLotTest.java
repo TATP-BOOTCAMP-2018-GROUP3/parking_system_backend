@@ -64,6 +64,7 @@ public class ParkingLotTest {
         //t
         assertEquals(201, result.getResponse().getStatus());
         assertEquals("Lot2", parkingLotRepository.findAll().get(0).getParkingLotName());
+        assertEquals(10, parkingLotRepository.findAll().get(0).getCapacity());
 
     }
 
