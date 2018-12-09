@@ -1,8 +1,11 @@
 package com.oocl.parking;
 
 import com.oocl.parking.domain.ParkingClerk;
+import com.oocl.parking.domain.ParkingLot;
 import com.oocl.parking.models.ParkingClerkResponse;
+import com.oocl.parking.models.ParkingLotResponse;
 import com.oocl.parking.repositories.ParkingClerkRepository;
+import com.oocl.parking.repositories.ParkingLotRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,7 +24,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @SpringBootTest
 @AutoConfigureMockMvc
 public class ParkingLotTest {
-/*
+
     @Autowired
     private ParkingLotRepository parkingLotRepository;
 
@@ -39,7 +42,7 @@ public class ParkingLotTest {
     {
         //g
         ParkingLot lot = new ParkingLot("Test1", 10);
-        parkingLotkRepository.saveAndFlush(lot);
+        parkingLotRepository.saveAndFlush(lot);
         //w
         final MvcResult result = mvc.perform(get("/parkinglots")).andReturn();
         //t
@@ -47,6 +50,6 @@ public class ParkingLotTest {
         final ParkingLotResponse[] responses = getContentAsObject(result, ParkingLotResponse[].class);
         assertEquals("Test1", responses[0].getParkingLotName());
     }
-*/
+
 
 }
