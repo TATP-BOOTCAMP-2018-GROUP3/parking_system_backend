@@ -21,6 +21,7 @@ import static com.oocl.parking.WebTestUtil.getContentAsObject;
 import static junit.framework.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -65,6 +66,25 @@ public class ParkingLotTest {
         assertEquals(201, result.getResponse().getStatus());
         assertEquals("Lot2", parkingLotRepository.findAll().get(0).getParkingLotName());
         assertEquals(10, parkingLotRepository.findAll().get(0).getCapacity());
+
+    }
+
+    @Test
+    public void put_lot_test() throws Exception{
+        //g
+        parkingLotRepository.saveAndFlush(new ParkingLot("Old", 10));
+        String lotJson = "{\"parkingLotName\":\"Lot3\",\"capacity\":1}";
+
+        //w
+        Long id = parkingLotRepository.findAll().get(0).getId();
+        final MvcResult result = mvc.perform(put("/parkinglots/"+id)
+                .contentType(MediaType.APPLICATION_JSON).content(lotJson)).andReturn();
+
+        //t
+        final ParkingLotResponse[] responses = getContentAsObject(result, ParkingLotResponse[].class);
+        assertEquals(200, result.getResponse().getStatus());
+        assertEquals("Lot3", parkingLotRepository.findAll().get(0).getParkingLotName());
+        assertEquals(1, parkingLotRepository.findAll().get(0).getCapacity());
 
     }
 
