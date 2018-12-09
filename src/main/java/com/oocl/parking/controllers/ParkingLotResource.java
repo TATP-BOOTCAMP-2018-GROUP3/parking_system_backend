@@ -1,14 +1,15 @@
 package com.oocl.parking.controllers;
 
 
+import com.oocl.parking.domain.ParkingLot;
+import com.oocl.parking.domain.ParkingOrder;
 import com.oocl.parking.models.ParkingLotResponse;
 import com.oocl.parking.repositories.ParkingLotRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.net.URI;
 
 @RestController
 @CrossOrigin
@@ -23,5 +24,11 @@ public class ParkingLotResource {
                 .map(ParkingLotResponse::create)
                 .toArray(ParkingLotResponse[]::new);
         return ResponseEntity.ok(lots);
+    }
+
+    @PostMapping(consumes = "application/json")
+    public ResponseEntity add(@RequestBody ParkingLot lot){
+        parkingLotRepository.save(lot);
+        return ResponseEntity.created(URI.create("/parkinglots/"+lot.getId())).build();
     }
 }
