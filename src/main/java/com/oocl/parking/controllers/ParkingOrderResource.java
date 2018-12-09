@@ -39,6 +39,15 @@ public class ParkingOrderResource {
         return ResponseEntity.ok(response);
     }
 
+    @GetMapping(params = "status")
+    public ResponseEntity<ParkingOrderResponse[]> getByStatus(@RequestParam String status)
+    {
+        final ParkingOrderResponse[] orders = parkingOrderRepository.findByStatus(status).stream()
+                .map(ParkingOrderResponse::create)
+                .toArray(ParkingOrderResponse[]::new);
+        return ResponseEntity.ok(orders);
+    }
+
     @PostMapping(consumes = "application/json")
     public ResponseEntity add(@RequestBody ParkingOrder order){
         parkingOrderRepository.save(order);
