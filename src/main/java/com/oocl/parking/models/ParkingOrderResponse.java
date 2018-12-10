@@ -1,5 +1,6 @@
 package com.oocl.parking.models;
 
+import com.oocl.parking.domain.ParkingLot;
 import com.oocl.parking.domain.ParkingOrder;
 
 import java.util.Objects;
@@ -74,8 +75,8 @@ public class ParkingOrderResponse {
         response.setStatus(status);
         return response;
     }
-    public static ParkingOrderResponse create(ParkingOrder entity)
+    public static ParkingOrderResponse create(ParkingOrder entity, ParkingLot parkngLot)
     {
-        return create(entity.getId(), entity.getCarId(), entity.getParkingLot(), entity.getPhoneNumber(), entity.getOwnedByEmployeeId(), entity.getStatus());
+        return create(entity.getId(), entity.getCarId(), parkngLot.getParkingLotName(), entity.getPhoneNumber(), entity.getOwnedByEmployeeId(), entity.getStatus());
     }
 }

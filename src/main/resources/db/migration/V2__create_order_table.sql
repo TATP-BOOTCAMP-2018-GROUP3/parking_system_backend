@@ -6,6 +6,5 @@ create table parking_order(
     phone_num varchar(64),
     owned_by_employee_id bigint,
     created_time timestamp,
-    completed_time timestamp,
     primary key (id)
 )

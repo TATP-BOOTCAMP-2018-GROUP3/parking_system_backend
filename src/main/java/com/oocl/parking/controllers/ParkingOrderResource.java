@@ -1,8 +1,10 @@
 package com.oocl.parking.controllers;
 
+import com.oocl.parking.domain.ParkingLot;
 import com.oocl.parking.domain.ParkingOrder;
 import com.oocl.parking.models.ParkingClerkResponse;
 import com.oocl.parking.models.ParkingOrderResponse;
+import com.oocl.parking.repositories.ParkingLotRepository;
 import com.oocl.parking.repositories.ParkingOrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -20,10 +22,16 @@ public class ParkingOrderResource {
     @Autowired
     private ParkingOrderRepository parkingOrderRepository;
 
+    @Autowired
+    private ParkingLotRepository parkinglotRepository;
+
     @GetMapping
     public ResponseEntity<ParkingOrderResponse[]> getAll() {
         final ParkingOrderResponse[] orders = parkingOrderRepository.findAll().stream()
-                .map(ParkingOrderResponse::create)
+                .map(parkingOrder -> {
+                    Optional<ParkingLot> parkingLot = parkinglotRepository.findById(parkingOrder.getParkingLotId());
+                    return ParkingOrderResponse.create(parkingOrder, parkingLot.get());
+                })
                 .toArray(ParkingOrderResponse[]::new);
         return ResponseEntity.ok(orders);
     }
@@ -35,7 +43,8 @@ public class ParkingOrderResource {
         if(!order.isPresent()){
             return ResponseEntity.notFound().build();
         }
-        final ParkingOrderResponse response = ParkingOrderResponse.create(order.get());
+        Optional<ParkingLot> parkingLot = parkinglotRepository.findById(order.get().getParkingLotId());
+        final ParkingOrderResponse response = ParkingOrderResponse.create(order.get(), parkingLot.get());
         return ResponseEntity.ok(response);
     }
 
@@ -43,7 +52,10 @@ public class ParkingOrderResource {
     public ResponseEntity<ParkingOrderResponse[]> getByStatus(@RequestParam String status)
     {
         final ParkingOrderResponse[] orders = parkingOrderRepository.findByStatus(status).stream()
-                .map(ParkingOrderResponse::create)
+                .map(parkingOrder -> {
+                    Optional<ParkingLot> parkingLot = parkinglotRepository.findById(parkingOrder.getParkingLotId());
+                    return ParkingOrderResponse.create(parkingOrder, parkingLot.get());
+                })
                 .toArray(ParkingOrderResponse[]::new);
         return ResponseEntity.ok(orders);
     }

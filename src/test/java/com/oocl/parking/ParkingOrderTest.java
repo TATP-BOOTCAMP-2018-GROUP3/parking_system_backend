@@ -1,9 +1,11 @@
 package com.oocl.parking;
 
 import com.oocl.parking.domain.ParkingClerk;
+import com.oocl.parking.domain.ParkingLot;
 import com.oocl.parking.domain.ParkingOrder;
 import com.oocl.parking.models.ParkingClerkResponse;
 import com.oocl.parking.models.ParkingOrderResponse;
+import com.oocl.parking.repositories.ParkingLotRepository;
 import com.oocl.parking.repositories.ParkingOrderRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,6 +33,9 @@ public class ParkingOrderTest {
     private ParkingOrderRepository parkingOrderRepository;
 
     @Autowired
+    private ParkingLotRepository parkingLotRepository;
+
+    @Autowired
     private MockMvc mvc;
 
     @Before
@@ -42,10 +47,12 @@ public class ParkingOrderTest {
     @Test
     public void get_order_test() throws Exception {
         //g
-        ParkingOrder order = new ParkingOrder("Car1", "TempTest1", "12345678");
+        ParkingLot lot = new ParkingLot("TempTest1", 10);
+        parkingLotRepository.saveAndFlush(lot);
+        ParkingOrder order = new ParkingOrder("Car1", lot.getId(), "12345678");
         parkingOrderRepository.saveAndFlush(order);
         //w
-        final MvcResult result = mvc.perform(get("/orders")).andReturn();
+        final MvcResult result = mvc.perform(get("/parkingorders")).andReturn();
         //t
         assertEquals(200, result.getResponse().getStatus());
         final ParkingOrderResponse[] responses = getContentAsObject(result, ParkingOrderResponse[].class);
@@ -56,10 +63,12 @@ public class ParkingOrderTest {
     @Test
     public void get_order_by_id_test() throws Exception{
         //g
-        ParkingOrder order = new ParkingOrder("Car2", "TempTest2", "12345678");
+        ParkingLot lot = new ParkingLot("TempTest2", 10);
+        parkingLotRepository.saveAndFlush(lot);
+        ParkingOrder order = new ParkingOrder("Car2", lot.getId(), "12345678");
         parkingOrderRepository.saveAndFlush(order);
         //w
-        final MvcResult result = mvc.perform(get("/orders/"+order.getId())).andReturn();
+        final MvcResult result = mvc.perform(get("/parkingorders/"+order.getId())).andReturn();
         //t
         assertEquals(200, result.getResponse().getStatus());
         final ParkingOrderResponse response = getContentAsObject(result, ParkingOrderResponse.class);
@@ -70,9 +79,11 @@ public class ParkingOrderTest {
     @Test
     public void post_order_test() throws Exception{
         //g
-        String orderJson = "{\"carId\":\"Car3\",\"parkingLot\":\"TempTest3\", \"phoneNumber\":\"12345678\"}";
+        ParkingLot lot = new ParkingLot("Lot", 10);
+        parkingLotRepository.saveAndFlush(lot);
+        String orderJson = "{\"carId\":\"Car3\",\"parkingLotId\":"+lot.getId()+", \"phoneNumber\":\"12345678\"}";
         //w
-        final MvcResult result = mvc.perform(post("/orders")
+        final MvcResult result = mvc.perform(post("/parkingorders")
                 .contentType(MediaType.APPLICATION_JSON).content(orderJson)).andReturn();
 
         //t
@@ -84,13 +95,15 @@ public class ParkingOrderTest {
     @Test
     public void put_order_change_test() throws Exception{
         //g
-        String orderJson = "{\"carId\":\"Car4\",\"parkingLot\":\"TempTest4\", \"phoneNumber\":\"12345678\"}";
-        mvc.perform(post("/orders/").contentType(MediaType.APPLICATION_JSON).content(orderJson)).andReturn();
+        ParkingLot lot = new ParkingLot("Lot", 10);
+        parkingLotRepository.saveAndFlush(lot);
+        String orderJson = "{\"carId\":\"Car4\",\"parkingLotId\":"+lot.getId()+", \"phoneNumber\":\"12345678\"}";
+        mvc.perform(post("/parkingorders/").contentType(MediaType.APPLICATION_JSON).content(orderJson)).andReturn();
 
         Long id = parkingOrderRepository.findAll().get(0).getId();
-        String putJson = "{\"carId\":\"Car5\",\"parkingLot\":\"TempTest5\", \"phoneNumber\":\"852-87654321\"}";
+        String putJson = "{\"carId\":\"Car5\",\"parkingLotId\":"+lot.getId()+", \"phoneNumber\":\"852-87654321\"}";
         //w
-        MvcResult result = mvc.perform(put("/orders/"+id)
+        MvcResult result = mvc.perform(put("/parkingorders/"+id)
                 .contentType(MediaType.APPLICATION_JSON).content(putJson)).andReturn();
 
         //t

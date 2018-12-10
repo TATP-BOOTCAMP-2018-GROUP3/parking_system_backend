@@ -61,6 +61,6 @@ public class ParkingLotResponse {
     }
     public static ParkingLotResponse create(ParkingLot entity)
     {
-        return create(entity.getParkingLotName(), entity.getCapacity(), entity.getAvailablePositionCount(), entity.getEmployee_id());
+        return create(entity.getParkingLotName(), entity.getCapacity(), entity.getAvailablePositionCount(), entity.getEmployeeId());
     }
 }

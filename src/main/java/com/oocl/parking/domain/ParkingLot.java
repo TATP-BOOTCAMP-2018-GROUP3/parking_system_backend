@@ -18,8 +18,12 @@ public class ParkingLot {
     @Column(name = "available_position_count")
     private int availablePositionCount;
 
+    @OneToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "id")
+    private ParkingClerk clerk;
+
     @Column(name = "employee_id")
-    private String employee_id;
+    private String employeeId;
 
     public ParkingLot(){}
 
@@ -59,16 +63,24 @@ public class ParkingLot {
         this.availablePositionCount = availablePositionCount;
     }
 
-    public String getEmployee_id() {
-        return employee_id;
+    public String getEmployeeId() {
+        return employeeId;
     }
 
-    public void setEmployee_id(String employee_id) {
-        this.employee_id = employee_id;
+    public void setEmployeeId(String employeeId) {
+        this.employeeId = employeeId;
     }
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public ParkingClerk getClerk() {
+        return clerk;
+    }
+
+    public void setClerk(ParkingClerk clerk) {
+        this.clerk = clerk;
     }
 }
 

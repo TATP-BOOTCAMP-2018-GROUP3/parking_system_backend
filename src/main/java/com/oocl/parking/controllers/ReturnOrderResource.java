@@ -1,11 +1,13 @@
 package com.oocl.parking.controllers;
 
+import com.oocl.parking.domain.ParkingLot;
 import com.oocl.parking.domain.ParkingOrder;
 import com.oocl.parking.domain.ReturnOrder;
-import com.oocl.parking.models.ParkingOrderResponse;
 import com.oocl.parking.models.ReturnOrderResponse;
+import com.oocl.parking.repositories.ParkingLotRepository;
 import com.oocl.parking.repositories.ParkingOrderRepository;
 import com.oocl.parking.repositories.ReturnOrderRepository;
+import javafx.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +25,6 @@ public class ReturnOrderResource {
 
     @Autowired
     private ParkingOrderRepository parkingOrderRepository;
-
     @GetMapping
     public ResponseEntity<ReturnOrderResponse[]> getAll() {
         final ReturnOrderResponse[] orders = returnOrderRepository.findAll().stream()
@@ -65,7 +66,7 @@ public class ReturnOrderResource {
     @PostMapping(consumes = "application/json")
     public ResponseEntity add(@RequestBody ReturnOrder order){
         Optional<ParkingOrder> parkingOrder = parkingOrderRepository.findById(order.getParkingOrderId());
-        if (!(parkingOrder).isPresent() || !(parkingOrder.get().getStatus().equals("Completed") || parkingOrder.get().getParkingLot() == null)){
+        if (!(parkingOrder).isPresent() || !(parkingOrder.get().getStatus().equals("Completed") || parkingOrder.get().getParkingLotId() == null)){
             return ResponseEntity.badRequest().build();
         }
         returnOrderRepository.saveAndFlush(order);
@@ -83,7 +84,7 @@ public class ReturnOrderResource {
         ReturnOrder originOrder = thisOrder.get();
         if (order.getParkingOrderId() != null) {
             Optional<ParkingOrder> parkingOrder = parkingOrderRepository.findById(order.getParkingOrderId());
-            if (parkingOrder.isPresent() && (parkingOrder.get().getStatus().equals("Completed") && parkingOrder.get().getParkingLot() != null)) {
+            if (parkingOrder.isPresent() && (parkingOrder.get().getStatus().equals("Completed") && parkingOrder.get().getParkingLotId() != null)) {
                 originOrder.setParkingOrderId(order.getParkingOrderId());
             }
         }
@@ -93,5 +94,4 @@ public class ReturnOrderResource {
         returnOrderRepository.saveAndFlush(originOrder);
         return ResponseEntity.ok().build();
     }
-
 }

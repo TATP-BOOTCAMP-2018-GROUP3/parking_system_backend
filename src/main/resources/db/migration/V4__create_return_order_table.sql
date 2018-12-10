@@ -4,6 +4,5 @@ create table return_order(
     phone_number varchar(64) not null,
     status varchar(64),
     created_time timestamp,
-    completed_time timestamp,
     primary key (id)
 )

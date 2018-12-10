@@ -9,6 +9,10 @@ public class ReturnOrder {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "id")
+    private ParkingOrder parkingOrder;
+
     @Column(name = "parking_order_id")
     private Long parkingOrderId;
 
@@ -54,5 +58,13 @@ public class ReturnOrder {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public ParkingOrder getParkingOrder() {
+        return parkingOrder;
+    }
+
+    public void setParkingOrder(ParkingOrder parkingOrder) {
+        this.parkingOrder = parkingOrder;
     }
 }

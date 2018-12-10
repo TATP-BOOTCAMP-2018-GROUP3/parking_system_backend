@@ -1,5 +1,8 @@
 package com.oocl.parking.domain;
 
+import com.oocl.parking.repositories.ParkingLotRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import javax.persistence.*;
 
 @Entity
@@ -12,8 +15,8 @@ public class ParkingOrder {
     @Column(name = "car_id")
     private String carId;
 
-    @Column(name = "parking_lot")
-    private String parkingLot;
+    @Column(name = "parking_lot_id")
+    private Long parkingLotId;
 
     @Column(name = "status")
     private String status;
@@ -24,20 +27,28 @@ public class ParkingOrder {
     @Column(name = "owned_by_employee_id")
     private Long ownedByEmployeeId;
 
+    @OneToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "id")
+    private ParkingLot parkingLot;
+
+    @OneToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "id")
+    private ParkingClerk clerk;
+
     public ParkingOrder(){
         this.status = "Pending";
     }
 
-    public ParkingOrder(String carId, String parkingLot, String phoneNumber){
+    public ParkingOrder(String carId, Long parkingLotId, String phoneNumber){
         this.carId = carId;
-        this.parkingLot = parkingLot;
+        this.parkingLotId = parkingLotId;
         this.phoneNumber = phoneNumber;
         this.status = "Pending";
     }
 
-    public ParkingOrder(String carId, String parkingLot, String status, String phoneNumber){
+    public ParkingOrder(String carId, Long parkingLotId, String status, String phoneNumber){
         this.carId = carId;
-        this.parkingLot = parkingLot;
+        this.parkingLotId = parkingLotId;
         this.phoneNumber = phoneNumber;
         this.status = status;
     }
@@ -58,12 +69,12 @@ public class ParkingOrder {
         this.carId = carId;
     }
 
-    public String getParkingLot() {
-        return parkingLot;
+    public Long getParkingLotId() {
+        return parkingLotId;
     }
 
-    public void setParkingLot(String parkingLot) {
-        this.parkingLot = parkingLot;
+    public void setParkingLotId(Long parkingLotId) {
+        this.parkingLotId = parkingLotId;
     }
 
     public String getStatus() {
@@ -88,5 +99,21 @@ public class ParkingOrder {
 
     public void setOwnedByEmployeeId(Long ownedByEmployeeId) {
         this.ownedByEmployeeId = ownedByEmployeeId;
+    }
+
+    public ParkingLot getParkingLot() {
+        return parkingLot;
+    }
+
+    public void setParkingLot(ParkingLot parkingLot) {
+        this.parkingLot = parkingLot;
+    }
+
+    public ParkingClerk getClerk() {
+        return clerk;
+    }
+
+    public void setClerk(ParkingClerk clerk) {
+        this.clerk = clerk;
     }
 }

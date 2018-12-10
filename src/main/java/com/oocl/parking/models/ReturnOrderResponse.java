@@ -91,6 +91,7 @@ public class ReturnOrderResponse {
     public static ReturnOrderResponse create(ReturnOrder returnOrder, ParkingOrder parkingOrder)
     {
         return create(returnOrder.getId(), returnOrder.getPhoneNumber(), returnOrder.getStatus(), returnOrder.getParkingOrderId(),
-                parkingOrder.getCarId(), parkingOrder.getParkingLot(), parkingOrder.getOwnedByEmployeeId());
+                parkingOrder.getCarId(), parkingOrder.getParkingLot().getParkingLotName(), parkingOrder.getOwnedByEmployeeId());
     }
+
 }
