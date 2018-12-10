@@ -1,1 +1,0 @@
-alter table if exists parking_order add column if not exists phone_number varchar(64) default null
