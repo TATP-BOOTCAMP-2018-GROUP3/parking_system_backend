@@ -7,7 +7,6 @@ import com.oocl.parking.models.ReturnOrderResponse;
 import com.oocl.parking.repositories.ParkingLotRepository;
 import com.oocl.parking.repositories.ParkingOrderRepository;
 import com.oocl.parking.repositories.ReturnOrderRepository;
-import javafx.util.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
