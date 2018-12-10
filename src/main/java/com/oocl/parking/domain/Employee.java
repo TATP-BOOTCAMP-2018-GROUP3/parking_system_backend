@@ -3,6 +3,7 @@ package com.oocl.parking.domain;
 import javax.persistence.*;
 
 @Entity
+@Inheritance( strategy = InheritanceType.SINGLE_TABLE)
 @Table(name = "employee")
 public class Employee {
 
@@ -22,17 +23,25 @@ public class Employee {
     @Column(name = "role")
     private String role;
 
-    @Column(name = "username")
-    private String username;
+    @Column(name = "account_name")
+    private String accountName;
 
     @Column(name = "hashed_pw")
-    private String hashedpw;
+    private String hashedPassword;
 
     @Column(name = "token")
     private String token;
 
     @Column(name = "working_status")
     private String workingStatus;
+
+    public Employee(){}
+
+    public Employee(String name, String acName)
+    {
+        this.name = name;
+        this.accountName = acName;
+    }
 
     public String getName() {
         return name;
@@ -41,10 +50,6 @@ public class Employee {
     public void setName(String name) {
         this.name = name;
     }
-
-    public Employee(){}
-    public Employee(String name){this.name = name;}
-
 
     public String getEmail() {
         return email;
@@ -70,16 +75,16 @@ public class Employee {
         this.role = role;
     }
 
-    public String getUsername() {
-        return username;
+    public String getAccountName() {
+        return accountName;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setAccountName(String accountName) {
+        this.accountName = accountName;
     }
 
-    public String getHashedpw() {
-        return hashedpw;
+    public String getHashedPassword() {
+        return hashedPassword;
     }
 
     public String getToken() {
@@ -97,4 +102,13 @@ public class Employee {
     public void setWorkingStatus(String workingStatus) {
         this.workingStatus = workingStatus;
     }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
 }

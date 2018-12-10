@@ -9,7 +9,7 @@ public class ParkingOrder {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "car_Id")
+    @Column(name = "car_id")
     private String carId;
 
     @Column(name = "parking_lot")

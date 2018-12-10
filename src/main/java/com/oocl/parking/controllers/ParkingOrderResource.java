@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @RestController
 @CrossOrigin
-@RequestMapping("/orders")
+@RequestMapping("/parkingorders")
 public class ParkingOrderResource {
 
     @Autowired

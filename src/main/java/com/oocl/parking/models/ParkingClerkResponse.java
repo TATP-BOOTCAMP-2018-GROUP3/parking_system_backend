@@ -26,7 +26,7 @@ public class ParkingClerkResponse {
     }
     public static ParkingClerkResponse create(ParkingClerk entity)
     {
-        return create(entity.getName(),entity.getParking_status());
+        return create(entity.getEmployee().getAccountName(),entity.getParkingStatus());
     }
 
     @JsonIgnore

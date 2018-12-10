@@ -1,5 +1,5 @@
 ALTER TABLE parking_clerk
-ADD FOREIGN KEY (id) REFERENCES employee(id);
+ADD FOREIGN KEY (employee_id) REFERENCES employee(id);
 
 ALTER TABLE parking_lot
 ADD FOREIGN KEY (employee_id) REFERENCES parking_clerk(id);

@@ -1,7 +1,9 @@
 package com.oocl.parking;
 
+import com.oocl.parking.domain.Employee;
 import com.oocl.parking.domain.ParkingClerk;
 import com.oocl.parking.models.ParkingClerkResponse;
+import com.oocl.parking.repositories.EmployeeRepository;
 import com.oocl.parking.repositories.ParkingClerkRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,11 +31,15 @@ public class ParkingClerkTest {
     private ParkingClerkRepository parkingClerkRepository;
 
     @Autowired
+    private EmployeeRepository employeeRepository;
+    @Autowired
     private MockMvc mvc;
 
     @Before
     public void clear_repository(){
         parkingClerkRepository.deleteAll();
+        employeeRepository.deleteAll();
+        employeeRepository.flush();
         parkingClerkRepository.flush();
     }
 
@@ -41,7 +47,8 @@ public class ParkingClerkTest {
     public void get_parking_clerk_test() throws Exception
     {
         //g
-        ParkingClerk clerk = new ParkingClerk("Test1");
+        Employee e = new Employee("Test1","Test1");
+        ParkingClerk clerk = new ParkingClerk(e);
         parkingClerkRepository.saveAndFlush(clerk);
         //w
         final MvcResult result = mvc.perform(get("/parkingclerks")).andReturn();
@@ -55,14 +62,14 @@ public class ParkingClerkTest {
     public void post_parking_clerk_test() throws Exception
     {
         //g
-        String clerkJson = "{\"accountName\":\"Test2\"}";
+        String clerkJson = "{\"name\":\"Test2\",\"accountName\":\"Test2\"}";
         //w
         final MvcResult result = mvc.perform(post("/parkingclerks")
         .contentType(MediaType.APPLICATION_JSON).content(clerkJson)).andReturn();
 
         //t
         assertEquals(201, result.getResponse().getStatus());
-        assertEquals("Test2", parkingClerkRepository.findAll().get(0).getName());
+        assertEquals("Test2", parkingClerkRepository.findAll().get(0).getEmployee().getName());
 
     }
 }

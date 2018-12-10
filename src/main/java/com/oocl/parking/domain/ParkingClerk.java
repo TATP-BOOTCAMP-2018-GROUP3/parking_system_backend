@@ -5,29 +5,46 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "parking_clerk")
-public class ParkingClerk extends Employee{
+public class ParkingClerk{
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "id")
+    private Employee employee;
+
     @Column(name = "parking_status")
-    private String parking_status = "Pending";
+    private String parkingStatus;
 
-    public ParkingClerk(){}
+    @Column(name = "employee_id")
+    private Long employeeId;
 
-    public ParkingClerk(String name){
-        super(name);
+    public ParkingClerk(){
+        this.parkingStatus = "Available";
     }
 
+    public ParkingClerk(Employee e)
+    {
+        this.employee = e;
+        this.employeeId = e.getId();
+        this.parkingStatus = "Available";
+    }
 
     public Long getId() {
         return id;
     }
 
-    public String getParking_status() {
-        return parking_status;
+    public String getParkingStatus() {
+        return parkingStatus;
     }
 
-    public void setParking_status(String parking_status) {
-        this.parking_status = parking_status;
+    public void setParkingStatus(String parkingStatus) {
+        this.parkingStatus = parkingStatus;
+    }
+
+    public Employee getEmployee() {
+        return employee;
     }
 }
