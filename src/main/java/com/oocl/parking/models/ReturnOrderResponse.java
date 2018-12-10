@@ -1,5 +1,6 @@
 package com.oocl.parking.models;
 
+import com.oocl.parking.domain.ParkingLot;
 import com.oocl.parking.domain.ParkingOrder;
 import com.oocl.parking.domain.ReturnOrder;
 
@@ -88,10 +89,13 @@ public class ReturnOrderResponse {
         response.setParkingOrderId(parkingOrderId);
         return response;
     }
-    public static ReturnOrderResponse create(ReturnOrder returnOrder, ParkingOrder parkingOrder)
+    public static ReturnOrderResponse create(ReturnOrder returnOrder, ParkingOrder parkingOrder, ParkingLot parkingLot)
     {
+        if (parkingLot == null) {
+            parkingLot = new ParkingLot();
+        }
         return create(returnOrder.getId(), returnOrder.getPhoneNumber(), returnOrder.getStatus(), returnOrder.getParkingOrderId(),
-                parkingOrder.getCarId(), parkingOrder.getParkingLot().getParkingLotName(), parkingOrder.getOwnedByEmployeeId());
+                parkingOrder.getCarId(), parkingLot.getParkingLotName(), parkingOrder.getOwnedByEmployeeId());
     }
 
 }

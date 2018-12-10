@@ -75,8 +75,11 @@ public class ParkingOrderResponse {
         response.setStatus(status);
         return response;
     }
-    public static ParkingOrderResponse create(ParkingOrder entity, ParkingLot parkngLot)
+    public static ParkingOrderResponse create(ParkingOrder entity, ParkingLot parkingLot)
     {
-        return create(entity.getId(), entity.getCarId(), parkngLot.getParkingLotName(), entity.getPhoneNumber(), entity.getOwnedByEmployeeId(), entity.getStatus());
+        if (parkingLot == null){
+            parkingLot = new ParkingLot();
+        }
+        return create(entity.getId(), entity.getCarId(), parkingLot.getParkingLotName(), entity.getPhoneNumber(), entity.getOwnedByEmployeeId(), entity.getStatus());
     }
 }
