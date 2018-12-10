@@ -21,7 +21,7 @@ public class ParkingOrder {
     @Column(name = "status")
     private String status;
 
-    @Column(name = "phone_number")
+    @Column(name = "phone_num")
     private String phoneNumber;
 
     @Column(name = "owned_by_employee_id")
@@ -36,6 +36,13 @@ public class ParkingOrder {
     private ParkingClerk clerk;
 
     public ParkingOrder(){
+        this.status = "Pending";
+    }
+
+    public ParkingOrder(String carId, String phoneNumber)
+    {
+        this.carId = carId;
+        this.phoneNumber = phoneNumber;
         this.status = "Pending";
     }
 
