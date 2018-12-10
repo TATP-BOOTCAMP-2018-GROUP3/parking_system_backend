@@ -28,10 +28,7 @@ public class ParkingOrderResource {
     @GetMapping
     public ResponseEntity<ParkingOrderResponse[]> getAll() {
         final ParkingOrderResponse[] orders = parkingOrderRepository.findAll().stream()
-                .map(parkingOrder -> {
-                    Optional<ParkingLot> parkingLot = parkinglotRepository.findById(parkingOrder.getParkingLotId());
-                    return ParkingOrderResponse.create(parkingOrder, parkingLot.get());
-                })
+                .map(parkingOrder -> ParkingOrderResponse.create(parkingOrder, parkingOrder.getParkingLot()))
                 .toArray(ParkingOrderResponse[]::new);
         return ResponseEntity.ok(orders);
     }
@@ -52,10 +49,7 @@ public class ParkingOrderResource {
     public ResponseEntity<ParkingOrderResponse[]> getByStatus(@RequestParam String status)
     {
         final ParkingOrderResponse[] orders = parkingOrderRepository.findByStatus(status).stream()
-                .map(parkingOrder -> {
-                    Optional<ParkingLot> parkingLot = parkinglotRepository.findById(parkingOrder.getParkingLotId());
-                    return ParkingOrderResponse.create(parkingOrder, parkingLot.get());
-                })
+                .map(parkingOrder -> ParkingOrderResponse.create(parkingOrder, parkingOrder.getParkingLot()))
                 .toArray(ParkingOrderResponse[]::new);
         return ResponseEntity.ok(orders);
     }
@@ -76,5 +70,6 @@ public class ParkingOrderResource {
         parkingOrderRepository.save(order);
         return ResponseEntity.ok().build();
     }
+
 
 }
