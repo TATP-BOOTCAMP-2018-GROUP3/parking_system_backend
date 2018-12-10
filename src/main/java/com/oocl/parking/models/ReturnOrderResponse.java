@@ -78,7 +78,7 @@ public class ReturnOrderResponse {
         Objects.requireNonNull(parkingOrderId);
         Objects.requireNonNull(carId);
         Objects.requireNonNull(parkingLot);
-        Objects.requireNonNull(ownedByEmployeeId);
+//        Objects.requireNonNull(ownedByEmployeeId);
         final ReturnOrderResponse response = new ReturnOrderResponse();
         response.setId(id);
         response.setCarId(carId);
