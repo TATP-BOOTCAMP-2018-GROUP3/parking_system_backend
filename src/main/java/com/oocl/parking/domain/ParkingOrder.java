@@ -27,14 +27,6 @@ public class ParkingOrder {
     @Column(name = "owned_by_employee_id")
     private Long ownedByEmployeeId;
 
-    @OneToOne(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "id")
-    private ParkingLot parkingLot;
-
-    @OneToOne(cascade = CascadeType.PERSIST)
-    @JoinColumn(name = "id")
-    private ParkingClerk clerk;
-
     public ParkingOrder(){
         this.status = "Pending";
     }
@@ -108,19 +100,4 @@ public class ParkingOrder {
         this.ownedByEmployeeId = ownedByEmployeeId;
     }
 
-    public ParkingLot getParkingLot() {
-        return parkingLot;
-    }
-
-    public void setParkingLot(ParkingLot parkingLot) {
-        this.parkingLot = parkingLot;
-    }
-
-    public ParkingClerk getClerk() {
-        return clerk;
-    }
-
-    public void setClerk(ParkingClerk clerk) {
-        this.clerk = clerk;
-    }
 }

@@ -2,7 +2,6 @@ package com.oocl.parking.controllers;
 
 import com.oocl.parking.domain.ParkingLot;
 import com.oocl.parking.domain.ParkingOrder;
-import com.oocl.parking.models.ParkingClerkResponse;
 import com.oocl.parking.models.ParkingOrderResponse;
 import com.oocl.parking.repositories.ParkingLotRepository;
 import com.oocl.parking.repositories.ParkingOrderRepository;
@@ -10,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.swing.text.html.Option;
 import java.net.URI;
 import java.util.Optional;
 
@@ -25,13 +23,21 @@ public class ParkingOrderResource {
     @Autowired
     private ParkingLotRepository parkinglotRepository;
 
+    ParkingLot getParkingLotByParkingOrder(ParkingOrder parkingOrder){
+        ParkingLot parkingLot = null;
+        if (parkingOrder.getParkingLotId() != null) {
+            Optional<ParkingLot> optionalParkingLot = parkinglotRepository.findById(parkingOrder.getParkingLotId());
+            if (optionalParkingLot.isPresent()) {
+                parkingLot = optionalParkingLot.get();
+            }
+        }
+        return parkingLot;
+    }
+
     @GetMapping
     public ResponseEntity<ParkingOrderResponse[]> getAll() {
         final ParkingOrderResponse[] orders = parkingOrderRepository.findAll().stream()
-                .map(parkingOrder -> {
-                    Optional<ParkingLot> parkingLot = parkinglotRepository.findById(parkingOrder.getParkingLotId());
-                    return ParkingOrderResponse.create(parkingOrder, parkingLot.get());
-                })
+                .map(parkingOrder -> ParkingOrderResponse.create(parkingOrder, getParkingLotByParkingOrder(parkingOrder)))
                 .toArray(ParkingOrderResponse[]::new);
         return ResponseEntity.ok(orders);
     }
@@ -43,8 +49,7 @@ public class ParkingOrderResource {
         if(!order.isPresent()){
             return ResponseEntity.notFound().build();
         }
-        Optional<ParkingLot> parkingLot = parkinglotRepository.findById(order.get().getParkingLotId());
-        final ParkingOrderResponse response = ParkingOrderResponse.create(order.get(), parkingLot.get());
+        final ParkingOrderResponse response = ParkingOrderResponse.create(order.get(), getParkingLotByParkingOrder(order.get()));
         return ResponseEntity.ok(response);
     }
 
@@ -52,10 +57,7 @@ public class ParkingOrderResource {
     public ResponseEntity<ParkingOrderResponse[]> getByStatus(@RequestParam String status)
     {
         final ParkingOrderResponse[] orders = parkingOrderRepository.findByStatus(status).stream()
-                .map(parkingOrder -> {
-                    Optional<ParkingLot> parkingLot = parkinglotRepository.findById(parkingOrder.getParkingLotId());
-                    return ParkingOrderResponse.create(parkingOrder, parkingLot.get());
-                })
+                .map(parkingOrder -> ParkingOrderResponse.create(parkingOrder, getParkingLotByParkingOrder(parkingOrder)))
                 .toArray(ParkingOrderResponse[]::new);
         return ResponseEntity.ok(orders);
     }
@@ -76,5 +78,6 @@ public class ParkingOrderResource {
         parkingOrderRepository.save(order);
         return ResponseEntity.ok().build();
     }
+
 
 }

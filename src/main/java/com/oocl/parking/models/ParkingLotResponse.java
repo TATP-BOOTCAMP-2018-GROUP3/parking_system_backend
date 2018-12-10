@@ -8,6 +8,8 @@ import java.util.Objects;
 
 public class ParkingLotResponse {
 
+    private Long id;
+
     private String parkingLotName;
 
     private int capacity;
@@ -15,6 +17,14 @@ public class ParkingLotResponse {
     private int availablePositionCount;
 
     private String employee_id;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public String getParkingLotName() {
         return parkingLotName;
@@ -48,10 +58,12 @@ public class ParkingLotResponse {
         this.employee_id = employee_id;
     }
 
-    private static ParkingLotResponse create(String name, int capacity, int posCount, String employee_id){
+    private static ParkingLotResponse create(Long id, String name, int capacity, int posCount, String employee_id){
+        Objects.requireNonNull(id);
         Objects.requireNonNull(name);
         Objects.requireNonNull(capacity);
         final ParkingLotResponse response = new ParkingLotResponse();
+        response.setId(id);
         response.setCapacity(capacity);
         response.setAvailablePositionCount(posCount);
         response.setParkingLotName(name);
@@ -61,6 +73,6 @@ public class ParkingLotResponse {
     }
     public static ParkingLotResponse create(ParkingLot entity)
     {
-        return create(entity.getParkingLotName(), entity.getCapacity(), entity.getAvailablePositionCount(), entity.getEmployeeId());
+        return create(entity.getId(), entity.getParkingLotName(), entity.getCapacity(), entity.getAvailablePositionCount(), entity.getEmployeeId());
     }
 }

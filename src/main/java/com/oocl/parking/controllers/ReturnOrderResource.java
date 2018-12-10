@@ -24,12 +24,27 @@ public class ReturnOrderResource {
 
     @Autowired
     private ParkingOrderRepository parkingOrderRepository;
+
+    @Autowired
+    private ParkingLotRepository parkinglotRepository;
+
+    ParkingLot getParkingLotByParkingOrder(ParkingOrder parkingOrder){
+        ParkingLot parkingLot = null;
+        if (parkingOrder.getParkingLotId() != null) {
+            Optional<ParkingLot> optionalParkingLot = parkinglotRepository.findById(parkingOrder.getParkingLotId());
+            if (optionalParkingLot.isPresent()) {
+                parkingLot = optionalParkingLot.get();
+            }
+        }
+        return parkingLot;
+    }
+
     @GetMapping
     public ResponseEntity<ReturnOrderResponse[]> getAll() {
         final ReturnOrderResponse[] orders = returnOrderRepository.findAll().stream()
                 .map(returnOrder -> {
                     ParkingOrder parkingOrder = parkingOrderRepository.getOne(returnOrder.getParkingOrderId());
-                    return ReturnOrderResponse.create(returnOrder, parkingOrder);
+                    return ReturnOrderResponse.create(returnOrder, parkingOrder, getParkingLotByParkingOrder(parkingOrder));
                 })
                 .toArray(ReturnOrderResponse[]::new);
         return ResponseEntity.ok(orders);
@@ -46,7 +61,7 @@ public class ReturnOrderResource {
         if (!(parkingOrder).isPresent()){
             return ResponseEntity.badRequest().build();
         }
-        final ReturnOrderResponse response = ReturnOrderResponse.create(order.get(), parkingOrder.get());
+        final ReturnOrderResponse response = ReturnOrderResponse.create(order.get(), parkingOrder.get(), getParkingLotByParkingOrder(parkingOrder.get()));
         return ResponseEntity.ok(response);
     }
 
@@ -56,7 +71,7 @@ public class ReturnOrderResource {
         final ReturnOrderResponse[] orders = returnOrderRepository.findByStatus(status).stream()
                 .map(returnOrder -> {
                     ParkingOrder parkingOrder = parkingOrderRepository.getOne(returnOrder.getParkingOrderId());
-                    return ReturnOrderResponse.create(returnOrder, parkingOrder);
+                    return ReturnOrderResponse.create(returnOrder, parkingOrder, getParkingLotByParkingOrder(parkingOrder));
                 })
                 .toArray(ReturnOrderResponse[]::new);
         return ResponseEntity.ok(orders);
