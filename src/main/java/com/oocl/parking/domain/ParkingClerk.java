@@ -5,31 +5,29 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "parking_clerk")
-public class ParkingClerk {
+public class ParkingClerk extends Employee{
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(name = "account_name", unique = true)
-    private String accountName;
+    @Column(name = "parking_status")
+    private String parking_status = "Pending";
 
     public ParkingClerk(){}
 
     public ParkingClerk(String name){
-        this.accountName = name;
+        super(name);
     }
 
-
-    public String getAccountName() {
-        return accountName;
-    }
-
-    public void setAccountName(String accountName) {
-        this.accountName = accountName;
-    }
 
     public Long getId() {
         return id;
+    }
+
+    public String getParking_status() {
+        return parking_status;
+    }
+
+    public void setParking_status(String parking_status) {
+        this.parking_status = parking_status;
     }
 }
