@@ -52,4 +52,13 @@ public class ParkingLotResource {
         parkingLotRepository.deleteById(id);
         return ResponseEntity.ok().build();
     }
+    @GetMapping(value = "/{id}")
+    public ResponseEntity<ParkingLotResponse> getById(@PathVariable Long id){
+        final Optional<ParkingLot> parkingLot = parkingLotRepository.findById(id);
+        if (!parkingLot.isPresent()){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(ParkingLotResponse.create(parkingLot.get()));
+    }
+
 }
