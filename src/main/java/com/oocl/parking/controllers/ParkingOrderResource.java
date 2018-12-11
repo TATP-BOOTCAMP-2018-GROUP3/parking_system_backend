@@ -77,7 +77,7 @@ public class ParkingOrderResource {
         if (!thisOrder.get().getStatus().equals("Pending"))
             return ResponseEntity.badRequest().header("Error", "Parking order is already grabbed").build();
         order.setId(id);
-        thisOrder.get().setStatus("Grabbed");
+        order.setStatus("Grabbed");
         parkingOrderRepository.save(order);
         return ResponseEntity.ok().build();
     }
