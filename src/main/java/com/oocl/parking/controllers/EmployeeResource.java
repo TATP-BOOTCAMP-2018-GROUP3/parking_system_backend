@@ -8,6 +8,7 @@ import com.oocl.parking.utils.EmployeeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -17,11 +18,11 @@ import java.util.Optional;
 @RequestMapping("/employees")
 public class EmployeeResource {
 
-
     @Autowired
     private EmployeeRepository employeeRepository;
 
     @GetMapping
+    @PreAuthorize("hasRole('CLERK')")
     public ResponseEntity<EmployeeResponse[]> getAll()
     {
         final EmployeeResponse[] employees = employeeRepository.findAll().stream()
@@ -30,7 +31,9 @@ public class EmployeeResource {
 
         return ResponseEntity.ok(employees);
     }
+
     @GetMapping(value = "/{id}")
+    @PreAuthorize("hasRole('CLERK')")
     public ResponseEntity<EmployeeResponse> getById(@PathVariable Long id)
     {
         final Optional<Employee> e = employeeRepository.findById(id);
@@ -39,7 +42,9 @@ public class EmployeeResource {
         }
         return ResponseEntity.ok(EmployeeResponse.create(e.get()));
     }
+
     @PostMapping(consumes = "application/json")
+    @PreAuthorize("hasRole('CLERK')")
     public ResponseEntity add(@RequestBody Employee employee){
         String randomPassword = EmployeeUtil.generateRandomString(6);
         employee = EmployeeUtil.fillEmployeeDefaultInfo(employee);
@@ -51,7 +56,5 @@ public class EmployeeResource {
                 .header("Content-Type", "application/json")
                 .body("{\"initialPassword\": " + "\"" + randomPassword + "\"" + "}");
     }
-
-
 
 }

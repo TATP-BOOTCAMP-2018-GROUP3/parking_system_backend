@@ -80,9 +80,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                         "/**/*.js"
                 ).permitAll()
                 .antMatchers("/auth/**").permitAll()
+                .antMatchers("/h2-console/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/parkingorders/*").permitAll()
+                .antMatchers(HttpMethod.POST, "/parkingorders").permitAll()
+                .antMatchers(HttpMethod.GET, "/returnorders/*").permitAll()
+                .antMatchers(HttpMethod.POST, "/returnorders").permitAll()
                 .anyRequest().authenticated()
                 .and()
-                .addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class)
+                .headers().frameOptions().sameOrigin();
         httpSecurity.headers().cacheControl();
     }
 }
