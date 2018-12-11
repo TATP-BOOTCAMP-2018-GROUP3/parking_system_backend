@@ -76,7 +76,7 @@ public class EmployeeResponse {
     }
 
     private static EmployeeResponse create(Long id, String name, String email, String phoneNum, String role, String accountName, String workingStatus) {
-        Objects.requireNonNull(name);
+        //Objects.requireNonNull(name);
         Objects.requireNonNull(id);
         Objects.requireNonNull(accountName);
         final EmployeeResponse response = new EmployeeResponse();
