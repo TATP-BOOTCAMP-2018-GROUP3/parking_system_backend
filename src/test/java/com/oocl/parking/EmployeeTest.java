@@ -53,4 +53,17 @@ public class EmployeeTest {
         assertEquals("123", responses[0].getPhoneNum());
     }
 
+    @Test
+    public void get_employee_by_id_test() throws Exception
+    {
+        Employee e = new Employee("test2", "email2", "123");
+        employeeRepository.saveAndFlush(e);
+        final MvcResult result = mvc.perform(get("/employees/"+e.getId())).andReturn();
+        assertEquals(200, result.getResponse().getStatus());
+        final EmployeeResponse responses = getContentAsObject(result, EmployeeResponse.class);
+        assertEquals("test2", responses.getAccountName());
+        assertEquals("email2", responses.getEmail());
+        assertEquals("123", responses.getPhoneNum());
+    }
+
 }
