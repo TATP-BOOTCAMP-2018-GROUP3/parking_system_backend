@@ -9,6 +9,7 @@ public class ParkingClerkResponse {
     private String accountName;
 
     private String parking_status;
+
     public String getAccountName() {
         return accountName;
     }

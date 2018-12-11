@@ -1,5 +1,7 @@
 package com.oocl.parking.domain;
 
+import com.oocl.parking.utils.EmployeeUtil;
+
 import javax.persistence.*;
 
 @Entity
@@ -35,12 +37,14 @@ public class Employee {
     @Column(name = "working_status")
     private String workingStatus;
 
-    public Employee(){}
+    public Employee(){
+    }
 
-    public Employee(String name, String acName)
+    public Employee(String accountName, String email, String phoneNum)
     {
-        this.name = name;
-        this.accountName = acName;
+        this.accountName = accountName;
+        this.email = email;
+        this.phoneNum = phoneNum;
     }
 
     public String getName() {
@@ -83,10 +87,6 @@ public class Employee {
         this.accountName = accountName;
     }
 
-    public String getHashedPassword() {
-        return hashedPassword;
-    }
-
     public String getToken() {
         return token;
     }
@@ -111,4 +111,11 @@ public class Employee {
         this.id = id;
     }
 
+    public String getHashedPassword() {
+        return hashedPassword;
+    }
+
+    public void setHashedPassword(String hashedPassword) {
+        this.hashedPassword = hashedPassword;
+    }
 }

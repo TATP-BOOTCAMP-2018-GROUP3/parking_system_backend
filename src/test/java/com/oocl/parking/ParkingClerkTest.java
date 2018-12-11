@@ -5,6 +5,7 @@ import com.oocl.parking.domain.ParkingClerk;
 import com.oocl.parking.models.ParkingClerkResponse;
 import com.oocl.parking.repositories.EmployeeRepository;
 import com.oocl.parking.repositories.ParkingClerkRepository;
+import com.oocl.parking.utils.EmployeeUtil;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,6 +20,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import static com.oocl.parking.WebTestUtil.getContentAsObject;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
@@ -27,11 +29,16 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @SpringBootTest
 @AutoConfigureMockMvc
 public class ParkingClerkTest {
+    private static final String RANDOM_PASSWORD = EmployeeUtil.generateRandomString(6);
+    private static final String DUMMY_EMAIL = "dummy@email.com";
+    private static final String DUMMY_PHONE_NUM = "12345678";
+
     @Autowired
     private ParkingClerkRepository parkingClerkRepository;
 
     @Autowired
     private EmployeeRepository employeeRepository;
+
     @Autowired
     private MockMvc mvc;
 
@@ -47,7 +54,8 @@ public class ParkingClerkTest {
     public void get_parking_clerk_test() throws Exception
     {
         //g
-        Employee e = new Employee("Test1","Test1");
+        Employee e = new Employee("Test1", DUMMY_EMAIL, DUMMY_PHONE_NUM);
+        e = EmployeeUtil.fillInEmployeePasswordInfo(e, RANDOM_PASSWORD);
         ParkingClerk clerk = new ParkingClerk(e);
         parkingClerkRepository.saveAndFlush(clerk);
         //w
@@ -62,14 +70,31 @@ public class ParkingClerkTest {
     public void post_parking_clerk_test() throws Exception
     {
         //g
-        String clerkJson = "{\"name\":\"Test2\",\"accountName\":\"Test2\"}";
+        String clerkJson = "{" +
+                            "\"accountName\":\"Test2\"," +
+                            "\"email\":\"" + DUMMY_EMAIL + "\"," +
+                            "\"phoneNum\":\"" + DUMMY_PHONE_NUM + "\"" +
+                            " }";
         //w
         final MvcResult result = mvc.perform(post("/parkingclerks")
         .contentType(MediaType.APPLICATION_JSON).content(clerkJson)).andReturn();
 
         //t
         assertEquals(201, result.getResponse().getStatus());
-        assertEquals("Test2", parkingClerkRepository.findAll().get(0).getEmployee().getName());
+        assertEquals("Test2", parkingClerkRepository.findAll().get(0).getEmployee().getAccountName());
+    }
 
+    @Test
+    public void test_remove_parking_clerk() throws Exception {
+        Employee employee = new Employee("Test3", DUMMY_EMAIL, DUMMY_PHONE_NUM);
+        employee = EmployeeUtil.fillInEmployeePasswordInfo(employee, RANDOM_PASSWORD);
+        ParkingClerk clerk = new ParkingClerk(employee);
+        parkingClerkRepository.saveAndFlush(clerk);
+
+        final MvcResult result = mvc.perform(delete("/parkingclerks/" + clerk.getId())).andReturn();
+
+        assertEquals(200, result.getResponse().getStatus());
+        assertTrue(parkingClerkRepository.findAll().isEmpty());
+        assertTrue(employeeRepository.findAll().isEmpty());
     }
 }
