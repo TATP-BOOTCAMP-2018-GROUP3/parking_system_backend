@@ -9,6 +9,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -16,6 +17,7 @@ import org.springframework.test.web.servlet.MvcResult;
 import static com.oocl.parking.WebTestUtil.getContentAsObject;
 import static junit.framework.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -64,6 +66,23 @@ public class EmployeeTest {
         assertEquals("test2", responses.getAccountName());
         assertEquals("email2", responses.getEmail());
         assertEquals("123", responses.getPhoneNum());
+    }
+    @Test
+    public void post_employee_test() throws Exception
+    {
+        //g
+        String employeeJson = "{" +
+                "\"accountName\":\"Test3\"," +
+                "\"email\":\"email3\"," +
+                "\"phoneNum\":\"123\"" +
+                " }";
+        //w
+        final MvcResult result = mvc.perform(post("/employees")
+                .contentType(MediaType.APPLICATION_JSON).content(employeeJson)).andReturn();
+
+        //t
+        assertEquals(201, result.getResponse().getStatus());
+        assertEquals("Test3", employeeRepository.findAll().get(0).getAccountName());
     }
 
 }
