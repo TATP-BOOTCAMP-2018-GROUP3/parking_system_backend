@@ -2,7 +2,6 @@ package com.oocl.parking.utils;
 
 import com.oocl.parking.domain.Employee;
 
-import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -19,7 +18,7 @@ public class EmployeeUtil {
         return new String(text);
     }
 
-    private static String hashPassword(String password, String token) {
+    public static String getHashedPassword(String password, String token) {
         String hashedPassword = null;
         try {
             MessageDigest md = null;
@@ -68,7 +67,7 @@ public class EmployeeUtil {
 
         String token = generateRandomString(8);
         updatedEmployee.setToken(token);
-        updatedEmployee.setHashedPassword(hashPassword(password, token));
+        updatedEmployee.setHashedPassword(getHashedPassword(password, token));
 
         return updatedEmployee;
     }

@@ -7,6 +7,7 @@ import com.oocl.parking.models.ParkingLotResponse;
 import com.oocl.parking.repositories.ParkingLotRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -20,6 +21,7 @@ public class ParkingLotResource {
     private ParkingLotRepository parkingLotRepository;
 
     @GetMapping
+    @PreAuthorize("hasRole('CLERK')")
     public ResponseEntity<ParkingLotResponse[]> getAll(){
         final ParkingLotResponse[] lots = parkingLotRepository.findAll().stream()
                 .map(ParkingLotResponse::create)
@@ -27,14 +29,25 @@ public class ParkingLotResource {
         return ResponseEntity.ok(lots);
     }
 
+    @GetMapping(value = "/{id}")
+    @PreAuthorize("hasRole('CLERK')")
+    public ResponseEntity<ParkingLotResponse> getById(@PathVariable Long id){
+        final Optional<ParkingLot> parkingLot = parkingLotRepository.findById(id);
+        if (!parkingLot.isPresent()){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(ParkingLotResponse.create(parkingLot.get()));
+    }
+
     @PostMapping(consumes = "application/json")
+    @PreAuthorize("hasRole('CLERK')")
     public ResponseEntity add(@RequestBody ParkingLot lot){
         parkingLotRepository.save(lot);
         return ResponseEntity.created(URI.create("/parkinglots/"+lot.getId())).build();
     }
 
     @PutMapping(value = "/{id}", consumes = "application/json")
-    public ResponseEntity<ParkingLot> updateOrder(@RequestBody ParkingLot lot, @PathVariable Long id)
+    public ResponseEntity<ParkingLot> update(@RequestBody ParkingLot lot, @PathVariable Long id)
     {
         Optional<ParkingLot> thisLot = parkingLotRepository.findById(id);
         if (!thisLot.isPresent())
@@ -43,7 +56,9 @@ public class ParkingLotResource {
         parkingLotRepository.save(lot);
         return ResponseEntity.ok().build();
     }
+
     @DeleteMapping(value = "/{id}")
+    @PreAuthorize("hasRole('CLERK')")
     public ResponseEntity delete(@PathVariable Long id)
     {
         Optional<ParkingLot> thisLot = parkingLotRepository.findById(id);
@@ -51,14 +66,6 @@ public class ParkingLotResource {
             return ResponseEntity.notFound().build();
         parkingLotRepository.deleteById(id);
         return ResponseEntity.ok().build();
-    }
-    @GetMapping(value = "/{id}")
-    public ResponseEntity<ParkingLotResponse> getById(@PathVariable Long id){
-        final Optional<ParkingLot> parkingLot = parkingLotRepository.findById(id);
-        if (!parkingLot.isPresent()){
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(ParkingLotResponse.create(parkingLot.get()));
     }
 
 }

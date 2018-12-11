@@ -9,6 +9,7 @@ import com.oocl.parking.repositories.ParkingOrderRepository;
 import com.oocl.parking.repositories.ReturnOrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -40,6 +41,7 @@ public class ReturnOrderResource {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('CLERK')")
     public ResponseEntity<ReturnOrderResponse[]> getAll() {
         final ReturnOrderResponse[] orders = returnOrderRepository.findAll().stream()
                 .map(returnOrder -> {
@@ -66,6 +68,7 @@ public class ReturnOrderResource {
     }
 
     @GetMapping(params = "status")
+    @PreAuthorize("hasRole('CLERK')")
     public ResponseEntity<ReturnOrderResponse[]> getByStatus(@RequestParam String status)
     {
         final ReturnOrderResponse[] orders = returnOrderRepository.findByStatus(status).stream()
@@ -88,6 +91,7 @@ public class ReturnOrderResource {
     }
 
     @PatchMapping(value = "/{id}", consumes = "application/json")
+    @PreAuthorize("hasRole('CLERK')")
     public ResponseEntity<ReturnOrderResponse> updateOrder(@RequestBody ReturnOrder order, @PathVariable Long id)
     {
         Optional<ReturnOrder> thisOrder = returnOrderRepository.findById(id);

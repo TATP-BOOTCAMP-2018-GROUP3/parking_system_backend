@@ -9,6 +9,7 @@ import com.oocl.parking.utils.EmployeeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -25,6 +26,7 @@ public class ParkingClerkResource {
     private EmployeeRepository employeeRepository;
 
     @GetMapping
+    @PreAuthorize("hasRole('CLERK')")
     public ResponseEntity<ParkingClerkResponse[]> getAll(){
         final ParkingClerkResponse[] clerks = parkingClerkRepository.findAll().stream()
                 .map(ParkingClerkResponse::create)
@@ -33,6 +35,7 @@ public class ParkingClerkResource {
     }
 
     @GetMapping(value = "/{id}")
+    @PreAuthorize("hasRole('CLERK')")
     public ResponseEntity<ParkingClerkResponse> getById(@PathVariable Long id){
         final Optional<ParkingClerk> parkingClerk = parkingClerkRepository.findById(id);
         if (!parkingClerk.isPresent()){
@@ -42,6 +45,7 @@ public class ParkingClerkResource {
     }
 
     @PostMapping(consumes = "application/json")
+    @PreAuthorize("hasRole('CLERK')")
     public ResponseEntity add(@RequestBody Employee employee){
         String randomPassword = EmployeeUtil.generateRandomString(6);
         employee = EmployeeUtil.fillEmployeeDefaultInfo(employee);
@@ -57,6 +61,7 @@ public class ParkingClerkResource {
     }
 
     @DeleteMapping(value = "/{id}")
+    @PreAuthorize("hasRole('CLERK')")
     public ResponseEntity remove(@PathVariable Long id){
         parkingClerkRepository.deleteById(id);
         return ResponseEntity.ok().build();

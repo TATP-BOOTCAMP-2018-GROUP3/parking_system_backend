@@ -7,6 +7,7 @@ import com.oocl.parking.repositories.ParkingLotRepository;
 import com.oocl.parking.repositories.ParkingOrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -35,6 +36,7 @@ public class ParkingOrderResource {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('CLERK')")
     public ResponseEntity<ParkingOrderResponse[]> getAll() {
         final ParkingOrderResponse[] orders = parkingOrderRepository.findAll().stream()
                 .map(parkingOrder -> ParkingOrderResponse.create(parkingOrder, getParkingLotByParkingOrder(parkingOrder)))
@@ -54,6 +56,7 @@ public class ParkingOrderResource {
     }
 
     @GetMapping(params = "status")
+    @PreAuthorize("hasRole('CLERK')")
     public ResponseEntity<ParkingOrderResponse[]> getByStatus(@RequestParam String status)
     {
         final ParkingOrderResponse[] orders = parkingOrderRepository.findByStatus(status).stream()
@@ -69,6 +72,7 @@ public class ParkingOrderResource {
     }
 
     @PutMapping(value = "/{id}", consumes = "application/json")
+    @PreAuthorize("hasRole('CLERK')")
     public ResponseEntity<ParkingOrder> updateOrder(@RequestBody ParkingOrder order, @PathVariable Long id)
     {
         Optional<ParkingOrder> thisOrder = parkingOrderRepository.findById(id);
