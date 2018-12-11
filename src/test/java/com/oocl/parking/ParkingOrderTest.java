@@ -132,4 +132,23 @@ public class ParkingOrderTest {
         //assertEquals("Car3", parkingOrderRepository.findAll().get(0).getCarId());
 
     }
+
+    @Test
+    public void should_get_badrequest_when_duplicate_grab_order() throws Exception{
+        //g
+        ParkingLot lot = new ParkingLot("Lot", 10);
+        parkingLotRepository.saveAndFlush(lot);
+        String orderJson = "{\"carId\":\"Car3\",\"parkingLotId\":\"1\", \"phoneNumber\":\"12345678\"}";
+        //w
+        mvc.perform(post("/parkingorders")
+                .contentType(MediaType.APPLICATION_JSON).content(orderJson)).andReturn();
+        Long id = parkingOrderRepository.findAll().get(0).getId();
+        mvc.perform(put("/parkingorders/"+id)
+                .contentType(MediaType.APPLICATION_JSON).content(orderJson)).andReturn();
+        final MvcResult result = mvc.perform(put("/parkingorders/"+id)
+                .contentType(MediaType.APPLICATION_JSON).content(orderJson)).andReturn();
+
+        //t
+        assertEquals(400, result.getResponse().getStatus());
+    }
 }
