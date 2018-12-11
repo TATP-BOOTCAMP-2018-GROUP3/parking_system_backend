@@ -12,14 +12,11 @@ public class ParkingClerk{
     private Long id;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "employee_id")
     private Employee employee;
 
     @Column(name = "parking_status")
     private String parkingStatus;
-
-    @Column(name = "employee_id")
-    private Long employeeId;
 
     public ParkingClerk(){
         this.parkingStatus = "Available";
@@ -28,7 +25,6 @@ public class ParkingClerk{
     public ParkingClerk(Employee e)
     {
         this.employee = e;
-        this.employeeId = e.getId();
         this.parkingStatus = "Available";
     }
 
