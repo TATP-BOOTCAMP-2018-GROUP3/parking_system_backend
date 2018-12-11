@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
+import java.util.Optional;
 
 @RestController
 @CrossOrigin
@@ -29,6 +30,15 @@ public class ParkingClerkResource {
                 .map(ParkingClerkResponse::create)
                 .toArray(ParkingClerkResponse[]::new);
         return ResponseEntity.ok(clerks);
+    }
+
+    @GetMapping(value = "/{id}")
+    public ResponseEntity<ParkingClerkResponse> getById(@PathVariable Long id){
+        final Optional<ParkingClerk> parkingClerk = parkingClerkRepository.findById(id);
+        if (!parkingClerk.isPresent()){
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(ParkingClerkResponse.create(parkingClerk.get()));
     }
 
     @PostMapping(consumes = "application/json")
