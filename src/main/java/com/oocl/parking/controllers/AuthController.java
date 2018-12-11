@@ -15,12 +15,15 @@ public class AuthController {
     @Autowired
     private AuthService authService;
 
-    @GetMapping(path="/login")
+    @PostMapping(path="/login")
     public ResponseEntity<String> login(@RequestBody LoginRequest request){
         if (request == null || request.getAccountName() == null || request.getPassword() == null){
             return ResponseEntity.badRequest().build();
         }
         String token = authService.login(request);
+        if (token == null){
+            return ResponseEntity.badRequest().build();
+        }
         return ResponseEntity.ok("{" + "\"token\": \"" + token + "\"}");
     }
 }

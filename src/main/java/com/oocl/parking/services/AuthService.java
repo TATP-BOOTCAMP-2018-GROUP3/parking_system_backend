@@ -16,6 +16,9 @@ public class AuthService {
 
     public String login(LoginRequest request){
         Employee employee = employeeRepository.findEmployeeByAccountName(request.getAccountName());
+        if (employee == null) {
+            return null;
+        }
         String token = employee.getToken();
         String hashedPassword = employee.getHashedPassword();
         String rehashedPassword = EmployeeUtil.getHashedPassword(request.getPassword(), token);
