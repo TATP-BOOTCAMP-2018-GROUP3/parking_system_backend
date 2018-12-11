@@ -128,7 +128,7 @@ public class ParkingOrderTest {
                 .contentType(MediaType.APPLICATION_JSON).content(orderJson)).andReturn();
 
                 //t
-        assertEquals("Grabbed", parkingOrderRepository.findAll().get(0).getStatus());
+        assertEquals("In Progress", parkingOrderRepository.findAll().get(0).getStatus());
         //assertEquals("Car3", parkingOrderRepository.findAll().get(0).getCarId());
 
     }
