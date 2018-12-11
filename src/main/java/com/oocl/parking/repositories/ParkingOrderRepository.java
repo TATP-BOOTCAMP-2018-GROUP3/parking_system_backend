@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface ParkingOrderRepository extends JpaRepository<ParkingOrder, Long> {
     List<ParkingOrder> findByStatus(String status);
+    List<ParkingOrder> findByOwnedByEmployeeId(Long ownedByEmployeeId);
 }

@@ -22,12 +22,12 @@ public class ParkingOrderResource {
     private ParkingOrderRepository parkingOrderRepository;
 
     @Autowired
-    private ParkingLotRepository parkinglotRepository;
+    private ParkingLotRepository parkingLotRepository;
 
     ParkingLot getParkingLotByParkingOrder(ParkingOrder parkingOrder){
         ParkingLot parkingLot = null;
         if (parkingOrder.getParkingLotId() != null) {
-            Optional<ParkingLot> optionalParkingLot = parkinglotRepository.findById(parkingOrder.getParkingLotId());
+            Optional<ParkingLot> optionalParkingLot = parkingLotRepository.findById(parkingOrder.getParkingLotId());
             if (optionalParkingLot.isPresent()) {
                 parkingLot = optionalParkingLot.get();
             }

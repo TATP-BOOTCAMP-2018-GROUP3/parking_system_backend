@@ -2,9 +2,14 @@ package com.oocl.parking.controllers;
 
 import com.oocl.parking.domain.Employee;
 import com.oocl.parking.domain.ParkingClerk;
+import com.oocl.parking.domain.ParkingLot;
+import com.oocl.parking.domain.ParkingOrder;
 import com.oocl.parking.models.ParkingClerkResponse;
+import com.oocl.parking.models.ParkingOrderResponse;
 import com.oocl.parking.repositories.EmployeeRepository;
 import com.oocl.parking.repositories.ParkingClerkRepository;
+import com.oocl.parking.repositories.ParkingLotRepository;
+import com.oocl.parking.repositories.ParkingOrderRepository;
 import com.oocl.parking.utils.EmployeeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,6 +29,23 @@ public class ParkingClerkResource {
 
     @Autowired
     private EmployeeRepository employeeRepository;
+
+    @Autowired
+    private ParkingOrderRepository parkingOrderRepository;
+
+    @Autowired
+    private ParkingLotRepository parkingLotRepository;
+
+    ParkingLot getParkingLotByParkingOrder(ParkingOrder parkingOrder){
+        ParkingLot parkingLot = null;
+        if (parkingOrder.getParkingLotId() != null) {
+            Optional<ParkingLot> optionalParkingLot = parkingLotRepository.findById(parkingOrder.getParkingLotId());
+            if (optionalParkingLot.isPresent()) {
+                parkingLot = optionalParkingLot.get();
+            }
+        }
+        return parkingLot;
+    }
 
     @GetMapping
     @PreAuthorize("hasRole('CLERK')")
@@ -65,5 +87,18 @@ public class ParkingClerkResource {
     public ResponseEntity remove(@PathVariable Long id){
         parkingClerkRepository.deleteById(id);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping(path="/{id}/parkingorders")
+    @PreAuthorize("hasRole('CLERK')")
+    public ResponseEntity<ParkingOrderResponse[]> getOwnedParkingLot(@PathVariable Long id) {
+        final Optional<Employee> e = employeeRepository.findById(id);
+        if (!e.isPresent()){
+            return ResponseEntity.notFound().build();
+        }
+        final ParkingOrderResponse[] orders = parkingOrderRepository.findByOwnedByEmployeeId(id).stream()
+                .map(parkingOrder -> ParkingOrderResponse.create(parkingOrder, getParkingLotByParkingOrder(parkingOrder)))
+                .toArray(ParkingOrderResponse[]::new);
+        return ResponseEntity.ok(orders);
     }
 }
