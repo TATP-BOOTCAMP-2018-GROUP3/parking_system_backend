@@ -73,8 +73,11 @@ public class ParkingOrderResource {
     {
         Optional<ParkingOrder> thisOrder = parkingOrderRepository.findById(id);
         if (!thisOrder.isPresent())
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.notFound().header("Error","Parking Order not found").build();
+        if (!thisOrder.get().getStatus().equals("Pending"))
+            return ResponseEntity.badRequest().header("Error", "Parking order is already grabbed").build();
         order.setId(id);
+        thisOrder.get().setStatus("Grabbed");
         parkingOrderRepository.save(order);
         return ResponseEntity.ok().build();
     }

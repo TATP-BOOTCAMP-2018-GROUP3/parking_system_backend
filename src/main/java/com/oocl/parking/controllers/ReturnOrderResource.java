@@ -59,7 +59,7 @@ public class ReturnOrderResource {
         }
         Optional<ParkingOrder> parkingOrder = parkingOrderRepository.findById(order.get().getParkingOrderId());
         if (!(parkingOrder).isPresent()){
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().header("Error", "Parking order not found").build();
         }
         final ReturnOrderResponse response = ReturnOrderResponse.create(order.get(), parkingOrder.get(), getParkingLotByParkingOrder(parkingOrder.get()));
         return ResponseEntity.ok(response);
