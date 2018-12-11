@@ -81,7 +81,7 @@ public class ReturnOrderResource {
     public ResponseEntity add(@RequestBody ReturnOrder order){
         Optional<ParkingOrder> parkingOrder = parkingOrderRepository.findById(order.getParkingOrderId());
         if (!(parkingOrder).isPresent() || !(parkingOrder.get().getStatus().equals("Completed") || parkingOrder.get().getParkingLotId() == null)){
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().header("Completed Parking Order Not Found").build();
         }
         returnOrderRepository.saveAndFlush(order);
         return ResponseEntity.created(URI.create("/orders/"+order.getId())).header("Access-Control-Expose-Headers", "Location").build();
