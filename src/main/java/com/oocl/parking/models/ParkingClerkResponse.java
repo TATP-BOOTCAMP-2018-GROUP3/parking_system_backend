@@ -15,6 +15,8 @@ public class ParkingClerkResponse {
 
     private String parking_status;
 
+    private String phoneNum;
+
     public String getAccountName() {
         return accountName;
     }
@@ -22,7 +24,7 @@ public class ParkingClerkResponse {
     public void setAccountName(String accountName) {
         this.accountName = accountName;
     }
-    private static ParkingClerkResponse create(Long id, Long employeeId, String name, String status){
+    private static ParkingClerkResponse create(Long id, Long employeeId, String name, String phoneNum, String status){
         Objects.requireNonNull(name);
         Objects.requireNonNull(employeeId);
         Objects.requireNonNull(id);
@@ -30,13 +32,14 @@ public class ParkingClerkResponse {
         response.setId(id);
         response.setEmployeeId(employeeId);
         response.setAccountName(name);
+        response.setPhoneNum(phoneNum);
         response.setParking_status(status);
         return response;
 
     }
     public static ParkingClerkResponse create(ParkingClerk entity)
     {
-        return create(entity.getId(),entity.getEmployee().getId(),entity.getEmployee().getAccountName(),entity.getParkingStatus());
+        return create(entity.getId(),entity.getEmployee().getId(),entity.getEmployee().getAccountName(),entity.getEmployee().getPhoneNum(),entity.getParkingStatus());
     }
 
     @JsonIgnore
@@ -67,5 +70,13 @@ public class ParkingClerkResponse {
 
     public void setEmployeeId(Long employeeId) {
         this.employeeId = employeeId;
+    }
+
+    public String getPhoneNum() {
+        return phoneNum;
+    }
+
+    public void setPhoneNum(String phoneNum) {
+        this.phoneNum = phoneNum;
     }
 }
