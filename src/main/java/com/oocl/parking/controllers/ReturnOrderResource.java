@@ -80,7 +80,7 @@ public class ReturnOrderResource {
     @PostMapping(consumes = "application/json")
     public ResponseEntity add(@RequestBody ReturnOrder order){
         Optional<ParkingOrder> parkingOrder = parkingOrderRepository.findById(order.getParkingOrderId());
-        if (!(parkingOrder).isPresent() || !(parkingOrder.get().getStatus().equals("Completed") || parkingOrder.get().getParkingLotId() == null)){
+        if (!(parkingOrder).isPresent() || !parkingOrder.get().getStatus().equals("Completed") || parkingOrder.get().getParkingLotId() == null){
             return ResponseEntity.badRequest().header("Completed Parking Order Not Found").build();
         }
         returnOrderRepository.saveAndFlush(order);
