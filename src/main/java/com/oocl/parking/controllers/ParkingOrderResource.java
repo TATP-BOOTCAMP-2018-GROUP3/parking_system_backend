@@ -74,8 +74,10 @@ public class ParkingOrderResource {
         Optional<ParkingOrder> thisOrder = parkingOrderRepository.findById(id);
         if (!thisOrder.isPresent())
             return ResponseEntity.notFound().header("Error","Parking Order not found").build();
-        if (!(thisOrder.get().getStatus().equals("Pending")||thisOrder.get().getStatus().equals("In Progress")))
-            return ResponseEntity.badRequest().header("Error", "Parking order is invalid").build();
+        if ((order.getStatus().equals("In Progress"))&&!(thisOrder.get().getStatus().equals("Pending")))
+            return ResponseEntity.badRequest().header("Error", "Parking order is not available to grab").build();
+        if ((order.getStatus().equals("Completed"))&&!(thisOrder.get().getStatus().equals("In Progress")))
+            return ResponseEntity.badRequest().header("Error", "Parking order cannot be completed").build();
         order.setId(id);
         parkingOrderRepository.save(order);
         return ResponseEntity.ok().build();
