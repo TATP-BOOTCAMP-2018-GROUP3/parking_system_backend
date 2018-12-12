@@ -42,6 +42,7 @@ public class ParkingLotResource {
     @PostMapping(consumes = "application/json")
     @PreAuthorize("hasRole('CLERK')")
     public ResponseEntity add(@RequestBody ParkingLot lot){
+        lot.setAvailablePositionCount(lot.getCapacity());
         parkingLotRepository.save(lot);
         return ResponseEntity.created(URI.create("/parkinglots/"+lot.getId())).build();
     }
