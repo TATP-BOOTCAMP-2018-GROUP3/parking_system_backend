@@ -83,4 +83,27 @@ public class EmployeeResource {
         return ResponseEntity.ok().build();
     }
 
+    @PatchMapping(value = "/{id}", consumes = "application/json")
+    @PreAuthorize("hasRole('CLERK')")
+    public ResponseEntity updatePatch(@RequestBody Employee employee, @PathVariable Long id)
+    {
+        Optional<Employee> thisEmployee = employeeRepository.findById(id);
+        if (!thisEmployee.isPresent())
+            return ResponseEntity.notFound().build();
+        Employee insertEmployee = thisEmployee.get();
+        if (employee.getAccountName() != null)
+        {
+            if (!employeeRepository.findByaccountName(employee.getAccountName()).equals(thisEmployee))
+                return ResponseEntity.badRequest().header("Error", "Account Name already exist").build();
+            insertEmployee.setAccountName(employee.getAccountName());
+        }
+        if (employee.getEmail() != null) {insertEmployee.setEmail(employee.getEmail());}
+        if (employee.getName() != null){insertEmployee.setName(employee.getName()); }
+        if (employee.getPhoneNum() != null ){insertEmployee.setPhoneNum(employee.getPhoneNum());}
+        if (employee.getRole()!= null ){insertEmployee.setRole(employee.getRole());}
+        if (employee.getWorkingStatus()!= null ){insertEmployee.setWorkingStatus(employee.getWorkingStatus());}
+        employeeRepository.save(insertEmployee);
+        return ResponseEntity.ok().build();
+    }
+
 }
