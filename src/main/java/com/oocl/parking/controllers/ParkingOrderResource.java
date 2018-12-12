@@ -85,7 +85,7 @@ public class ParkingOrderResource {
         order.setId(id);
 
         if (order.getStatus().equals("Completed")) {
-            ParkingLot parkingLot = getParkingLotByParkingOrder(thisOrder.get());
+            ParkingLot parkingLot = parkingLotRepository.getOne(order.getParkingLotId());
             parkingLot.setAvailablePositionCount(parkingLot.getAvailablePositionCount() - 1);
             parkingLotRepository.save(parkingLot);
         }

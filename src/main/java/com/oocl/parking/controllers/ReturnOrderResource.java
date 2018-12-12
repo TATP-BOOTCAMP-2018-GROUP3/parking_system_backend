@@ -108,7 +108,7 @@ public class ReturnOrderResource {
         }
         if (order.getPhoneNumber() != null) originOrder.setPhoneNumber(order.getPhoneNumber());
         if (order.getStatus() != null) originOrder.setStatus(order.getStatus());
-        ParkingLot parkingLot = getParkingLotByParkingOrder(parkingOrder.get());
+        ParkingLot parkingLot = parkinglotRepository.getOne(parkingOrder.get().getParkingLotId());
         parkingLot.setAvailablePositionCount(parkingLot.getAvailablePositionCount()+1);
         parkinglotRepository.save(parkingLot);
         returnOrderRepository.saveAndFlush(originOrder);
