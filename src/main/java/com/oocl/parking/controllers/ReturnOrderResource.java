@@ -98,17 +98,19 @@ public class ReturnOrderResource {
         if (!thisOrder.isPresent()) {
             return ResponseEntity.notFound().build();
         }
-
+        Optional<ParkingOrder> parkingOrder=null;
         ReturnOrder originOrder = thisOrder.get();
         if (order.getParkingOrderId() != null) {
-            Optional<ParkingOrder> parkingOrder = parkingOrderRepository.findById(order.getParkingOrderId());
+            parkingOrder = parkingOrderRepository.findById(order.getParkingOrderId());
             if (parkingOrder.isPresent() && (parkingOrder.get().getStatus().equals("Completed") && parkingOrder.get().getParkingLotId() != null)) {
                 originOrder.setParkingOrderId(order.getParkingOrderId());
             }
         }
         if (order.getPhoneNumber() != null) originOrder.setPhoneNumber(order.getPhoneNumber());
         if (order.getStatus() != null) originOrder.setStatus(order.getStatus());
-
+        ParkingLot parkingLot = getParkingLotByParkingOrder(parkingOrder.get());
+        parkingLot.setAvailablePositionCount(parkingLot.getAvailablePositionCount()+1);
+        parkinglotRepository.save(parkingLot);
         returnOrderRepository.saveAndFlush(originOrder);
         return ResponseEntity.ok().build();
     }

@@ -83,7 +83,12 @@ public class ParkingOrderResource {
         if ((order.getStatus().equals("Completed"))&&!(thisOrder.get().getStatus().equals("In Progress")))
             return ResponseEntity.badRequest().header("Error", "Parking order cannot be completed").build();
         order.setId(id);
+        ParkingLot parkingLot = getParkingLotByParkingOrder(thisOrder.get());
+        parkingLot.setAvailablePositionCount(parkingLot.getAvailablePositionCount()-1);
+        parkingLotRepository.save(parkingLot);
         parkingOrderRepository.save(order);
+
+
         return ResponseEntity.ok().build();
     }
 
