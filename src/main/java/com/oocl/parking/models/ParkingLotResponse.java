@@ -16,7 +16,7 @@ public class ParkingLotResponse {
 
     private int availablePositionCount;
 
-    private String employee_id;
+    private String employeeId;
 
     public Long getId() {
         return id;
@@ -50,12 +50,12 @@ public class ParkingLotResponse {
         this.availablePositionCount = availablePositionCount;
     }
 
-    public String getEmployee_id() {
-        return employee_id;
+    public String getEmployeeId() {
+        return employeeId;
     }
 
-    public void setEmployee_id(String employee_id) {
-        this.employee_id = employee_id;
+    public void setEmployeeId(String employeeId) {
+        this.employeeId = employeeId;
     }
 
     private static ParkingLotResponse create(Long id, String name, int capacity, int posCount, String employee_id){
@@ -67,7 +67,7 @@ public class ParkingLotResponse {
         response.setCapacity(capacity);
         response.setAvailablePositionCount(posCount);
         response.setParkingLotName(name);
-        response.setEmployee_id(employee_id);
+        response.setEmployeeId(employee_id);
         return response;
 
     }
