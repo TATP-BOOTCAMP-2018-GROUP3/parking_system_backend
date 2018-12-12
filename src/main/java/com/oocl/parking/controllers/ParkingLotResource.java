@@ -43,6 +43,10 @@ public class ParkingLotResource {
     @PreAuthorize("hasRole('CLERK')")
     public ResponseEntity add(@RequestBody ParkingLot lot){
         lot.setAvailablePositionCount(lot.getCapacity());
+        if (!lot.isCapacityValid())
+            return ResponseEntity.badRequest().header("Error", "ParkingLot capacity value is invalid!").build();
+        if (!parkingLotRepository.findByparkingLotName(lot.getParkingLotName()).isEmpty())
+            return ResponseEntity.badRequest().header("Error", "ParkingLot name already exist!").build();
         parkingLotRepository.save(lot);
         return ResponseEntity.created(URI.create("/parkinglots/"+lot.getId())).build();
     }

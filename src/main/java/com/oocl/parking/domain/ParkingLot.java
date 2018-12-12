@@ -1,10 +1,19 @@
 package com.oocl.parking.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 
 @Entity
 @Table(name = "parking_lot")
 public class ParkingLot {
+    @JsonIgnore
+    public boolean isCapacityValid()
+    {
+        if (this.capacity <= 0)
+            return false;
+        return true;
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
