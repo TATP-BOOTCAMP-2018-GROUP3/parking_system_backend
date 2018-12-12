@@ -17,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
 import java.util.Optional;
 
 @RestController
@@ -69,6 +68,8 @@ public class ParkingClerkResource {
     @PostMapping(consumes = "application/json")
     @PreAuthorize("hasRole('CLERK')")
     public ResponseEntity add(@RequestBody Employee employee){
+        if (employeeRepository.findByAccountName(employee.getAccountName()).size() >= 0)
+            return ResponseEntity.badRequest().header("Error", "Account Name already exist").build();
         String randomPassword = EmployeeUtil.generateRandomString(6);
         employee = EmployeeUtil.fillEmployeeDefaultInfo(employee);
         employee = EmployeeUtil.fillInEmployeePasswordInfo(employee, randomPassword);

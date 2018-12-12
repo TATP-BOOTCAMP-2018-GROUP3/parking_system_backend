@@ -7,7 +7,6 @@ import com.oocl.parking.repositories.EmployeeRepository;
 import com.oocl.parking.utils.EmployeeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -47,8 +46,8 @@ public class EmployeeResource {
     @PostMapping(consumes = "application/json")
     @PreAuthorize("hasRole('CLERK')")
     public ResponseEntity add(@RequestBody Employee employee){
-        if (!employeeRepository.findByaccountName(employee.getAccountName()).isEmpty())
-            ResponseEntity.badRequest().header("Error", "Account Name already exist");
+        if (employeeRepository.findByAccountName(employee.getAccountName()).size() >= 0)
+            return ResponseEntity.badRequest().header("Error", "Account Name already exist").build();
         String randomPassword = EmployeeUtil.generateRandomString(6);
         employee = EmployeeUtil.fillEmployeeDefaultInfo(employee);
         employee = EmployeeUtil.fillInEmployeePasswordInfo(employee, randomPassword);
@@ -93,7 +92,7 @@ public class EmployeeResource {
         Employee insertEmployee = thisEmployee.get();
         if (employee.getAccountName() != null)
         {
-            if (!employeeRepository.findByaccountName(employee.getAccountName()).equals(thisEmployee))
+            if (!employeeRepository.findByAccountName(employee.getAccountName()).equals(thisEmployee))
                 return ResponseEntity.badRequest().header("Error", "Account Name already exist").build();
             insertEmployee.setAccountName(employee.getAccountName());
         }
