@@ -19,12 +19,21 @@ script:
   - ./gradlew test
   - ./gradlew bootJar -x test
 deploy:
-  provider: heroku
-  api_key:
-    secure: c5359a19-f5ea-4a4b-938b-283501d8bd8b
-  app: parking-system-backend
-  on:
-    repo: TATP-BOOTCAMP-2018-GROUP3/parking_system_backend
+  - provider: heroku
+    api_key:
+      secure: c5359a19-f5ea-4a4b-938b-283501d8bd8b
+    app: parking-system-backend
+    on:
+      repo: TATP-BOOTCAMP-2018-GROUP3/parking_system_backend
+      branch: master
+  - provider: heroku
+    api_key:
+      secure: 18cef40c-bc86-43e4-bc9b-ec3fe3dfe7dc
+    app: parking-system-backend-prod
+    on:
+      repo: TATP-BOOTCAMP-2018-GROUP3/parking_system_backend
+      branch: production
+
 notifications:
   webhooks:
     on_success: change  # options: [always|never|change] default: always
