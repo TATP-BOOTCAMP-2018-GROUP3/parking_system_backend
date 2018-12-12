@@ -46,7 +46,7 @@ public class EmployeeResource {
     @PostMapping(consumes = "application/json")
     @PreAuthorize("hasRole('CLERK')")
     public ResponseEntity add(@RequestBody Employee employee){
-        if (employeeRepository.findByAccountName(employee.getAccountName()).size() >= 0)
+        if (employeeRepository.findByAccountName(employee.getAccountName()).size() > 0)
             return ResponseEntity.badRequest().header("Error", "Account Name already exist").build();
         String randomPassword = EmployeeUtil.generateRandomString(6);
         employee = EmployeeUtil.fillEmployeeDefaultInfo(employee);
