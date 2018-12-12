@@ -7,6 +7,7 @@ import com.oocl.parking.repositories.EmployeeRepository;
 import com.oocl.parking.utils.EmployeeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -46,6 +47,8 @@ public class EmployeeResource {
     @PostMapping(consumes = "application/json")
     @PreAuthorize("hasRole('CLERK')")
     public ResponseEntity add(@RequestBody Employee employee){
+        if (!employeeRepository.findByaccountName(employee.getAccountName()).isEmpty())
+            ResponseEntity.badRequest().header("Error", "Account Name already exist");
         String randomPassword = EmployeeUtil.generateRandomString(6);
         employee = EmployeeUtil.fillEmployeeDefaultInfo(employee);
         employee = EmployeeUtil.fillInEmployeePasswordInfo(employee, randomPassword);
@@ -55,6 +58,29 @@ public class EmployeeResource {
                 .header("Location", "/employees/"+employee.getId())
                 .header("Content-Type", "application/json")
                 .body("{\"initialPassword\": " + "\"" + randomPassword + "\"" + "}");
+    }
+
+    @PutMapping(value = "/{id}", consumes = "application/json")
+    @PreAuthorize("hasRole('CLERK')")
+    public ResponseEntity update(@RequestBody Employee employee, @PathVariable Long id){
+
+        Optional<Employee> e = employeeRepository.findById(id);
+        if (!e.isPresent())
+            return ResponseEntity.notFound().build();
+        employee.setId(id);
+        employeeRepository.save(employee);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping(value = "/{id}")
+    @PreAuthorize("hasRole('CLERK')")
+    public ResponseEntity delete(@PathVariable Long id)
+    {
+        Optional<Employee> e = employeeRepository.findById(id);
+        if (!e.isPresent())
+            return ResponseEntity.notFound().build();
+        employeeRepository.deleteById(id);
+        return ResponseEntity.ok().build();
     }
 
 }
