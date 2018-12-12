@@ -1,10 +1,7 @@
 package com.oocl.parking;
 
-import com.oocl.parking.domain.ParkingClerk;
 import com.oocl.parking.domain.ParkingLot;
-import com.oocl.parking.models.ParkingClerkResponse;
 import com.oocl.parking.models.ParkingLotResponse;
-import com.oocl.parking.repositories.ParkingClerkRepository;
 import com.oocl.parking.repositories.ParkingLotRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,6 +26,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @AutoConfigureMockMvc
 public class ParkingLotTest {
 
+    private static final String CLERK_JWT = "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiQ0xFUksiLCJpZCI6MSwidXNlcm5hbWUiOiJjbGVyayIsImV4cCI6MTU0NTAzNzgzOH0.sWgx_dU0jx5_MOtGbC_1sgaX92HNJJFllIL9Ff6Q4Q0";
+
     @Autowired
     private ParkingLotRepository parkingLotRepository;
 
@@ -48,7 +47,9 @@ public class ParkingLotTest {
         ParkingLot lot = new ParkingLot("Test1", 10);
         parkingLotRepository.saveAndFlush(lot);
         //w
-        final MvcResult result = mvc.perform(get("/parkinglots")).andReturn();
+        final MvcResult result = mvc.perform(get("/parkinglots")
+                                .header("Authorization", "Bearer " + CLERK_JWT))
+                                .andReturn();
         //t
         assertEquals(200, result.getResponse().getStatus());
         final ParkingLotResponse[] responses = getContentAsObject(result, ParkingLotResponse[].class);
@@ -61,6 +62,7 @@ public class ParkingLotTest {
         String lotJson = "{\"parkingLotName\":\"Lot2\",\"capacity\":10}";
         //w
         final MvcResult result = mvc.perform(post("/parkinglots")
+                .header("Authorization", "Bearer " + CLERK_JWT)
                 .contentType(MediaType.APPLICATION_JSON).content(lotJson)).andReturn();
 
         //t
@@ -74,13 +76,13 @@ public class ParkingLotTest {
     public void put_lot_test() throws Exception{
         //g
         String oldJson = "{\"parkingLotName\":\"Old\",\"capacity\":10}";
-        MvcResult result = mvc.perform(post("/parkinglots")
+        mvc.perform(post("/parkinglots").header("Authorization", "Bearer " + CLERK_JWT)
                 .contentType(MediaType.APPLICATION_JSON).content(oldJson)).andReturn();
         String lotJson = "{\"parkingLotName\":\"Lot3\",\"capacity\":1}";
 
         //w
         Long id = parkingLotRepository.findAll().get(0).getId();
-        result = mvc.perform(put("/parkinglots/"+id)
+        MvcResult result = mvc.perform(put("/parkinglots/"+id).header("Authorization", "Bearer " + CLERK_JWT)
                 .contentType(MediaType.APPLICATION_JSON).content(lotJson)).andReturn();
 
         //t
@@ -94,12 +96,12 @@ public class ParkingLotTest {
     public void delete_lot_test() throws Exception{
         //g
         String oldJson = "{\"parkingLotName\":\"Old\",\"capacity\":10}";
-        MvcResult result = mvc.perform(post("/parkinglots")
+        mvc.perform(post("/parkinglots").header("Authorization", "Bearer " + CLERK_JWT)
                 .contentType(MediaType.APPLICATION_JSON).content(oldJson)).andReturn();
 
         //w
         Long id = parkingLotRepository.findAll().get(0).getId();
-        result = mvc.perform(delete("/parkinglots/"+id)).andReturn();
+        MvcResult result = mvc.perform(delete("/parkinglots/"+id).header("Authorization", "Bearer " + CLERK_JWT)).andReturn();
 
         //t
         assertEquals(200, result.getResponse().getStatus());

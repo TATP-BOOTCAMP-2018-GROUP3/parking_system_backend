@@ -16,7 +16,7 @@ public class ParkingLotResponse {
 
     private int availablePositionCount;
 
-    private String employeeId;
+    private Long employeeId;
 
     public Long getId() {
         return id;
@@ -50,15 +50,15 @@ public class ParkingLotResponse {
         this.availablePositionCount = availablePositionCount;
     }
 
-    public String getEmployeeId() {
+    public Long getEmployeeId() {
         return employeeId;
     }
 
-    public void setEmployeeId(String employeeId) {
+    public void setEmployeeId(Long employeeId) {
         this.employeeId = employeeId;
     }
 
-    private static ParkingLotResponse create(Long id, String name, int capacity, int posCount, String employee_id){
+    private static ParkingLotResponse create(Long id, String name, int capacity, int posCount, Long employee_id){
         Objects.requireNonNull(id);
         Objects.requireNonNull(name);
         Objects.requireNonNull(capacity);

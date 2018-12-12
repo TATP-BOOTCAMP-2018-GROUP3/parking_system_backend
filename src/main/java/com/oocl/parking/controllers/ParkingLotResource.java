@@ -62,9 +62,9 @@ public class ParkingLotResource {
         Optional<ParkingLot> thisLot = parkingLotRepository.findById(id);
         if (!thisLot.isPresent())
             return ResponseEntity.notFound().build();
-        if (!lot.getEmployeeId().isEmpty())
+        if (lot.getEmployeeId()!=null)
         {
-            Optional<ParkingClerk> clerk = parkingClerkRepository.findById(Long.valueOf(lot.getEmployeeId()));
+            Optional<ParkingClerk> clerk = parkingClerkRepository.findById(lot.getEmployeeId());
             if (!clerk.isPresent())
                 return ResponseEntity.badRequest().header("Error", "Parking Clerk not Found").build();
         }

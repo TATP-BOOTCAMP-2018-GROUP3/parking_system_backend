@@ -32,7 +32,7 @@ public class ParkingLot {
     private ParkingClerk clerk;
 
     @Column(name = "employee_id")
-    private String employeeId;
+    private Long employeeId;
 
     public ParkingLot(){}
 
@@ -72,11 +72,11 @@ public class ParkingLot {
         this.availablePositionCount = availablePositionCount;
     }
 
-    public String getEmployeeId() {
+    public Long getEmployeeId() {
         return employeeId;
     }
 
-    public void setEmployeeId(String employeeId) {
+    public void setEmployeeId(Long employeeId) {
         this.employeeId = employeeId;
     }
 
