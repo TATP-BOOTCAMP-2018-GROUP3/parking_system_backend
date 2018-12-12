@@ -84,4 +84,25 @@ public class ParkingLotResource {
         return ResponseEntity.ok().build();
     }
 
+    @PatchMapping(value = "/{id}", consumes = "application/json")
+    @PreAuthorize("hasRole('CLERK')")
+    public ResponseEntity<ParkingLotResponse> updateOrder(@RequestBody ParkingLot lot, @PathVariable Long id)
+    {
+        Optional<ParkingLot> thisLot = parkingLotRepository.findById(id);
+        if (!thisLot.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+        ParkingLot originLot = thisLot.get();
+
+        if (lot.isCapacityValid()) {
+            int numberOfCar = originLot.getCapacity() - originLot.getAvailablePositionCount();
+            originLot.setCapacity(lot.getCapacity());
+            originLot.setAvailablePositionCount(lot.getCapacity() - numberOfCar);
+        }
+        if (lot.getEmployeeId() != null) originLot.setEmployeeId(lot.getEmployeeId());
+        if (lot.getParkingLotName() != null) originLot.setParkingLotName(lot.getParkingLotName());
+        parkingLotRepository.saveAndFlush(originLot);
+        return ResponseEntity.ok().build();
+    }
+
 }
