@@ -1,9 +1,11 @@
 package com.oocl.parking.controllers;
 
 
+import com.oocl.parking.domain.ParkingClerk;
 import com.oocl.parking.domain.ParkingLot;
 import com.oocl.parking.domain.ParkingOrder;
 import com.oocl.parking.models.ParkingLotResponse;
+import com.oocl.parking.repositories.ParkingClerkRepository;
 import com.oocl.parking.repositories.ParkingLotRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,9 @@ import java.util.Optional;
 public class ParkingLotResource {
     @Autowired
     private ParkingLotRepository parkingLotRepository;
+
+    @Autowired
+    private ParkingClerkRepository parkingClerkRepository;
 
     @GetMapping
     @PreAuthorize("hasRole('CLERK')")
@@ -57,6 +62,12 @@ public class ParkingLotResource {
         Optional<ParkingLot> thisLot = parkingLotRepository.findById(id);
         if (!thisLot.isPresent())
             return ResponseEntity.notFound().build();
+        if (!lot.getEmployeeId().isEmpty())
+        {
+            Optional<ParkingClerk> clerk = parkingClerkRepository.findById(Long.valueOf(lot.getEmployeeId()));
+            if (!clerk.isPresent())
+                return ResponseEntity.badRequest().header("Error", "Parking Clerk not Found").build();
+        }
         lot.setId(id);
         parkingLotRepository.save(lot);
         return ResponseEntity.ok().build();
