@@ -110,5 +110,13 @@ public class ParkingLot {
     public void setStatus(String status) {
         this.status = status;
     }
+
+    public boolean checkStatusValid() {
+        if (!getEmployeeId().equals(null))
+            return false;
+        if (getAvailablePositionCount()!=getCapacity())
+            return false;
+        return true;
+    }
 }
 
