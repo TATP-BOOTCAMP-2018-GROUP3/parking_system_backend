@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.Optional;
 
 @RestController
@@ -92,7 +93,7 @@ public class ParkingClerkResource {
 
     @GetMapping(path="/{id}/parkingorders")
     @PreAuthorize("hasRole('CLERK') or hasRole('ADMIN') or hasRole('MANAGER')")
-    public ResponseEntity<ParkingOrderResponse[]> getOwnedParkingLot(@PathVariable Long id) {
+    public ResponseEntity<ParkingOrderResponse[]> getOwnedParkingOrders(@PathVariable Long id) {
         final Optional<Employee> e = employeeRepository.findById(id);
         if (!e.isPresent()){
             return ResponseEntity.notFound().build();
@@ -101,6 +102,27 @@ public class ParkingClerkResource {
                 .map(parkingOrder -> ParkingOrderResponse.create(parkingOrder, getParkingLotByParkingOrder(parkingOrder)))
                 .toArray(ParkingOrderResponse[]::new);
         return ResponseEntity.ok(orders);
+    }
+
+    @PostMapping(path="/{id}/parkingorders", consumes = "application/json")
+    @PreAuthorize("hasRole('CLERK') or hasRole('ADMIN') or hasRole('MANAGER')")
+    public ResponseEntity grabParkingOrder(@PathVariable Long id, @RequestBody ParkingOrder order) {
+        final Optional<Employee> e = employeeRepository.findById(id);
+        if (!e.isPresent()){
+            return ResponseEntity.notFound().build();
+        }
+        final ParkingClerk parkingClerk = parkingClerkRepository.findByEmployee(e.get());
+        if (parkingClerk == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        final Optional<ParkingOrder> originOrder = parkingOrderRepository.findById(order.getId());
+        if (!originOrder.isPresent())
+            return ResponseEntity.notFound().header("Error","Parking Order not found").build();
+        if ((order.getStatus().equals("In Progress"))&&!(originOrder.get().getStatus().equals("Pending")))
+            return ResponseEntity.badRequest().header("Error", "Parking order is not available to grab").build();
+        order.setOwnedByEmployeeId(parkingClerk.getId());
+        parkingOrderRepository.saveAndFlush(order);
+        return ResponseEntity.created(URI.create("/orders/"+order.getId())).header("Access-Control-Expose-Headers", "Location").build();
     }
 
     @PatchMapping(path="/{id}")
