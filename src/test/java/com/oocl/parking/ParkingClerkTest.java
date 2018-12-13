@@ -56,6 +56,9 @@ public class ParkingClerkTest {
     {
         //g
         Employee e = new Employee("Test1", DUMMY_EMAIL, DUMMY_PHONE_NUM);
+        e.setName(e.getAccountName());
+        e.setRole("CLERK");
+        e.setWorkingStatus("On Duty");
         e = EmployeeUtil.fillInEmployeePasswordInfo(e, RANDOM_PASSWORD);
         ParkingClerk clerk = new ParkingClerk(e);
         parkingClerkRepository.saveAndFlush(clerk);
@@ -103,5 +106,21 @@ public class ParkingClerkTest {
         assertEquals(200, result.getResponse().getStatus());
         assertTrue(parkingClerkRepository.findAll().isEmpty());
         assertTrue(employeeRepository.findAll().isEmpty());
+    }
+
+    @Test
+    public void add_duplicate_account_name_clerk_test() throws Exception
+    {
+        Employee employee = new Employee("Test4", DUMMY_EMAIL, DUMMY_PHONE_NUM);
+        ParkingClerk clerk = new ParkingClerk(employee);
+        parkingClerkRepository.saveAndFlush(clerk);
+        String clerkJson = "{" +
+                "\"accountName\":\"Test4\"," +
+                "\"email\":\"" + DUMMY_EMAIL + "\"," +
+                "\"phoneNum\":\"" + DUMMY_PHONE_NUM + "\"" +
+                " }";
+        final MvcResult result = mvc.perform(post("/parkingclerks").header("Authorization", "Bearer " + ADMIN_JWT)
+                .content(clerkJson).contentType(MediaType.APPLICATION_JSON)).andReturn();
+        assertEquals(400, result.getResponse().getStatus());
     }
 }

@@ -102,7 +102,13 @@ public class ParkingLotResource {
         }
         if (lot.getEmployeeId() != null) originLot.setEmployeeId(lot.getEmployeeId());
         if (lot.getParkingLotName() != null) originLot.setParkingLotName(lot.getParkingLotName());
-        if (lot.getStatus() != null) originLot.setStatus(lot.getStatus());
+        if (lot.getStatus() != null)
+        {
+            if (originLot.checkStatusValid())
+                originLot.setStatus(lot.getStatus());
+            else
+                return ResponseEntity.badRequest().header("Error", "Parking Lot is assigned to a parking clerk or contains car").build();
+        }
         parkingLotRepository.saveAndFlush(originLot);
         return ResponseEntity.ok().build();
     }

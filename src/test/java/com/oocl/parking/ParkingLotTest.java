@@ -110,5 +110,16 @@ public class ParkingLotTest {
 
     }
 
+    @Test
+    public void add_lot_with_invalid_capacity_test() throws Exception
+    {
+        String oldJson = "{\"parkingLotName\":\"err\",\"capacity\":0}";
+        MvcResult result = mvc.perform(post("/parkinglots")
+                            .header("Authorization", "Bearer " + ADMIN_JWT)
+                            .contentType(MediaType.APPLICATION_JSON).content(oldJson))
+                            .andReturn();
+        assertEquals(400, result.getResponse().getStatus());
+    }
+
 
 }
