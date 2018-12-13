@@ -72,7 +72,7 @@ public class ParkingOrderTest {
         ParkingOrder order = new ParkingOrder("Car2", lot.getId(), "12345678");
         parkingOrderRepository.saveAndFlush(order);
         //w
-        final MvcResult result = mvc.perform(get("/parkingorders/"+order.getId())).andReturn();
+        final MvcResult result = mvc.perform(get("/parkingorders/"+order.getId()).header("Authorization", "Bearer " + CLERK_JWT)).andReturn();
         //t
         assertEquals(200, result.getResponse().getStatus());
         final ParkingOrderResponse response = getContentAsObject(result, ParkingOrderResponse.class);
@@ -104,12 +104,12 @@ public class ParkingOrderTest {
         ParkingLot lot = new ParkingLot("Lot", 10);
         parkingLotRepository.saveAndFlush(lot);
         String orderJson = "{\"carId\":\"Car4\",\"parkingLotId\":"+lot.getId()+", \"phoneNumber\":\"12345678\"}";
-        mvc.perform(post("/parkingorders/").contentType(MediaType.APPLICATION_JSON).content(orderJson)).andReturn();
+        mvc.perform(post("/parkingorders/").header("Authorization", "Bearer " + CLERK_JWT).contentType(MediaType.APPLICATION_JSON).content(orderJson)).andReturn();
 
         Long id = parkingOrderRepository.findAll().get(0).getId();
         String putJson = "{\"carId\":\"Car5\",\"parkingLotId\":"+lot.getId()+", \"phoneNumber\":\"852-87654321\"}";
         //w
-        MvcResult result = mvc.perform(put("/parkingorders/"+id)
+        MvcResult result = mvc.perform(put("/parkingorders/"+id).header("Authorization", "Bearer " + CLERK_JWT)
                 .contentType(MediaType.APPLICATION_JSON).content(putJson)).andReturn();
 
         //t
@@ -127,7 +127,7 @@ public class ParkingOrderTest {
         parkingLotRepository.saveAndFlush(lot);
         String orderJson = "{\"carId\":\"Car3\",\"parkingLotId\":\"1\", \"phoneNumber\":\"12345678\"}";
         //w
-        mvc.perform(post("/parkingorders")
+        mvc.perform(post("/parkingorders").header("Authorization", "Bearer " + CLERK_JWT)
                 .contentType(MediaType.APPLICATION_JSON).content(orderJson)).andReturn();
         Long id = parkingOrderRepository.findAll().get(0).getId();
         orderJson = "{\"carId\":\"Car3\",\"parkingLotId\":\"1\", \"phoneNumber\":\"12345678\", \"status\": \"In Progress\"}";
@@ -150,7 +150,7 @@ public class ParkingOrderTest {
         parkingLotRepository.saveAndFlush(lot);
         String orderJson = "{\"carId\":\"Car3\",\"parkingLotId\":\"1\", \"phoneNumber\":\"12345678\"}";
         //w
-        mvc.perform(post("/parkingorders")
+        mvc.perform(post("/parkingorders").header("Authorization", "Bearer " + CLERK_JWT)
                 .contentType(MediaType.APPLICATION_JSON).content(orderJson)).andReturn();
         Long id = parkingOrderRepository.findAll().get(0).getId();
         orderJson = "{\"carId\":\"Car3\",\"parkingLotId\":\"1\", \"phoneNumber\":\"12345678\", \"status\": \"In Progress\"}";
