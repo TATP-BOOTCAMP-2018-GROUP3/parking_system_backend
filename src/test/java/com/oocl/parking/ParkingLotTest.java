@@ -121,5 +121,19 @@ public class ParkingLotTest {
         assertEquals(400, result.getResponse().getStatus());
     }
 
+    @Test
+    public void add_lot_with_duplicate_name_test() throws Exception
+    {
+        ParkingLot lot = new ParkingLot("err", 10);
+        parkingLotRepository.saveAndFlush(lot);
+        String lotJson = "{\"parkingLotName\":\"err\",\"capacity\":10}";
+        final MvcResult result = mvc.perform(post("/parkinglots")
+                .header("Authorization", "Bearer " + ADMIN_JWT)
+                .contentType(MediaType.APPLICATION_JSON).content(lotJson))
+                .andReturn();
+        assertEquals(400, result.getResponse().getStatus());
+
+    }
+
 
 }
