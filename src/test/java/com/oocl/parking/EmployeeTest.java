@@ -16,9 +16,8 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import static com.oocl.parking.WebTestUtil.getContentAsObject;
 import static junit.framework.Assert.assertEquals;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static junit.framework.Assert.assertFalse;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -121,6 +120,17 @@ public class EmployeeTest {
             .header("Authorization", "Bearer " + CLERK_JWT).contentType(MediaType.APPLICATION_JSON).content(patchJson)).andReturn();
         assertEquals(400, result.getResponse().getStatus());
         assertEquals("AccountName1", employeeRepository.findAll().get(0).getAccountName());
+
+    }
+    @Test
+    public void delete_employee_by_id_test() throws Exception
+    {
+        employeeRepository.saveAndFlush(new Employee("Delete1", "email", "phonenum"));
+        Long id = employeeRepository.findAll().get(0).getId();
+        final MvcResult result = mvc.perform(delete("/employees/"+id)
+                .header("Authorization", "Bearer " + CLERK_JWT)).andReturn();
+        assertEquals(200, result.getResponse().getStatus());
+        assertFalse(employeeRepository.existsById(id));
 
     }
 
