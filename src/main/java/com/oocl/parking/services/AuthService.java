@@ -19,6 +19,9 @@ public class AuthService {
         if (employee == null) {
             return null;
         }
+        if (employee.getWorkingStatus().equals("Freeze")) {
+            return null;
+        }
         String token = employee.getToken();
         String hashedPassword = employee.getHashedPassword();
         String rehashedPassword = EmployeeUtil.getHashedPassword(request.getPassword(), token);
