@@ -99,7 +99,7 @@ public class ParkingOrderResource {
             parkingLot.setAvailablePositionCount(parkingLot.getAvailablePositionCount() - 1);
             parkingLotRepository.save(parkingLot);
         }
-        final Optional<Employee> e = employeeRepository.findById(id);
+        final Optional<Employee> e = employeeRepository.findById(order.getOwnedByEmployeeId());
         if (!e.isPresent()){
             return ResponseEntity.notFound().build();
         }

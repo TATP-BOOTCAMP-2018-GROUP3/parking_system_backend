@@ -5,6 +5,7 @@ import com.oocl.parking.domain.ParkingClerk;
 import com.oocl.parking.domain.ParkingLot;
 import com.oocl.parking.domain.ParkingOrder;
 import com.oocl.parking.models.ParkingClerkResponse;
+import com.oocl.parking.models.ParkingLotResponse;
 import com.oocl.parking.models.ParkingOrderResponse;
 import com.oocl.parking.models.ReturnOrderResponse;
 import com.oocl.parking.repositories.*;
@@ -108,6 +109,24 @@ public class ParkingClerkResource {
                 .toArray(ParkingOrderResponse[]::new);
         return ResponseEntity.ok(orders);
     }
+
+    @GetMapping(path="/{id}/parkinglots")
+    @PreAuthorize("hasRole('CLERK')")
+    public ResponseEntity<ParkingLotResponse[]> getOwnedParkingLots(@PathVariable Long id) {
+        final Optional<Employee> e = employeeRepository.findById(id);
+        if (!e.isPresent()){
+            return ResponseEntity.notFound().build();
+        }
+        final ParkingClerk parkingClerk = parkingClerkRepository.findByEmployee(e.get());
+        if (parkingClerk == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        final ParkingLotResponse[] lots = parkingLotRepository.findByEmployeeId(parkingClerk.getId()).stream()
+                .map(ParkingLotResponse::create)
+                .toArray(ParkingLotResponse[]::new);
+        return ResponseEntity.ok(lots);
+    }
+
 
     @PostMapping(path="/{id}/parkingorders", consumes = "application/json")
     @PreAuthorize("hasRole('CLERK') or hasRole('ADMIN') or hasRole('MANAGER')")
