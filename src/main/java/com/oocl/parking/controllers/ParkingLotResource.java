@@ -52,6 +52,7 @@ public class ParkingLotResource {
             return ResponseEntity.badRequest().header("Error", "ParkingLot capacity value is invalid!").build();
         if (!parkingLotRepository.findByparkingLotName(lot.getParkingLotName()).isEmpty())
             return ResponseEntity.badRequest().header("Error", "ParkingLot name already exist!").build();
+        lot.setStatus("open");
         parkingLotRepository.save(lot);
         return ResponseEntity.created(URI.create("/parkinglots/"+lot.getId())).build();
     }
