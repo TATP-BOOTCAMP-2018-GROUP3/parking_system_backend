@@ -6,10 +6,8 @@ import com.oocl.parking.domain.ParkingLot;
 import com.oocl.parking.domain.ParkingOrder;
 import com.oocl.parking.models.ParkingClerkResponse;
 import com.oocl.parking.models.ParkingOrderResponse;
-import com.oocl.parking.repositories.EmployeeRepository;
-import com.oocl.parking.repositories.ParkingClerkRepository;
-import com.oocl.parking.repositories.ParkingLotRepository;
-import com.oocl.parking.repositories.ParkingOrderRepository;
+import com.oocl.parking.models.ReturnOrderResponse;
+import com.oocl.parking.repositories.*;
 import com.oocl.parking.utils.EmployeeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -35,6 +33,9 @@ public class ParkingClerkResource {
 
     @Autowired
     private ParkingLotRepository parkingLotRepository;
+
+    @Autowired
+    private ReturnOrderRepository returnOrderRepository;
 
     ParkingLot getParkingLotByParkingOrder(ParkingOrder parkingOrder){
         ParkingLot parkingLot = null;
@@ -123,6 +124,26 @@ public class ParkingClerkResource {
         order.setOwnedByEmployeeId(parkingClerk.getId());
         parkingOrderRepository.saveAndFlush(order);
         return ResponseEntity.created(URI.create("/orders/"+order.getId())).header("Access-Control-Expose-Headers", "Location").build();
+    }
+
+    @GetMapping(path="/{id}/returnorders")
+    @PreAuthorize("hasRole('CLERK') or hasRole('ADMIN') or hasRole('MANAGER')")
+    public ResponseEntity<ReturnOrderResponse[]> getOwnedReturnOrders(@PathVariable Long id) {
+        final Optional<Employee> e = employeeRepository.findById(id);
+        if (!e.isPresent()){
+            return ResponseEntity.notFound().build();
+        }
+        final ParkingClerk parkingClerk = parkingClerkRepository.findByEmployee(e.get());
+        if (parkingClerk == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        final ReturnOrderResponse[] orders = returnOrderRepository.findByOwnedEmployeeId(parkingClerk.getId()).stream()
+                .map(returnOrder -> {
+                    ParkingOrder parkingOrder = parkingOrderRepository.getOne(returnOrder.getParkingOrderId());
+                    return ReturnOrderResponse.create(returnOrder, parkingOrder, getParkingLotByParkingOrder(parkingOrder));
+                })
+                .toArray(ReturnOrderResponse[]::new);
+        return ResponseEntity.ok(orders);
     }
 
     @PatchMapping(path="/{id}")
