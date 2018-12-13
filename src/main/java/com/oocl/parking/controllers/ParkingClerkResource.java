@@ -13,6 +13,7 @@ import com.oocl.parking.repositories.ParkingOrderRepository;
 import com.oocl.parking.utils.EmployeeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -101,5 +102,19 @@ public class ParkingClerkResource {
                 .map(parkingOrder -> ParkingOrderResponse.create(parkingOrder, getParkingLotByParkingOrder(parkingOrder)))
                 .toArray(ParkingOrderResponse[]::new);
         return ResponseEntity.ok(orders);
+    }
+    @PatchMapping(path="/{id}")
+    @PreAuthorize("hasRole('CLERK')")
+    public ResponseEntity updatePatch(@RequestBody ParkingClerk clerk, @PathVariable Long id) {
+        final Optional<ParkingClerk> parkingClerk = parkingClerkRepository.findById(id);
+        if (!parkingClerk.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+        ParkingClerk thisClerk = parkingClerk.get();
+        if (clerk.getParkingStatus() != null) {
+            thisClerk.setParkingStatus(clerk.getParkingStatus());
+        }
+        parkingClerkRepository.saveAndFlush(thisClerk);
+        return ResponseEntity.ok().build();
     }
 }
