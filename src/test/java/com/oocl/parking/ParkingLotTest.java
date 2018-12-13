@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @AutoConfigureMockMvc
 public class ParkingLotTest {
 
-    private static final String CLERK_JWT = "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiQ0xFUksiLCJpZCI6MSwidXNlcm5hbWUiOiJjbGVyayIsImV4cCI6MTU0NTAzNzgzOH0.sWgx_dU0jx5_MOtGbC_1sgaX92HNJJFllIL9Ff6Q4Q0";
+    private static final String ADMIN_JWT = "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiQURNSU4iLCJpZCI6MiwidXNlcm5hbWUiOiJhZG1pbiIsImV4cCI6MTU0NTExNDg4MX0.N-9HALvhp8-Ud8b3stkyetgBhtDLBcwZAxXDWkW-Els";
 
     @Autowired
     private ParkingLotRepository parkingLotRepository;
@@ -48,7 +48,7 @@ public class ParkingLotTest {
         parkingLotRepository.saveAndFlush(lot);
         //w
         final MvcResult result = mvc.perform(get("/parkinglots")
-                                .header("Authorization", "Bearer " + CLERK_JWT))
+                                .header("Authorization", "Bearer " + ADMIN_JWT))
                                 .andReturn();
         //t
         assertEquals(200, result.getResponse().getStatus());
@@ -62,7 +62,7 @@ public class ParkingLotTest {
         String lotJson = "{\"parkingLotName\":\"Lot2\",\"capacity\":10}";
         //w
         final MvcResult result = mvc.perform(post("/parkinglots")
-                .header("Authorization", "Bearer " + CLERK_JWT)
+                .header("Authorization", "Bearer " + ADMIN_JWT)
                 .contentType(MediaType.APPLICATION_JSON).content(lotJson)).andReturn();
 
         //t
@@ -76,13 +76,13 @@ public class ParkingLotTest {
     public void put_lot_test() throws Exception{
         //g
         String oldJson = "{\"parkingLotName\":\"Old\",\"capacity\":10}";
-        mvc.perform(post("/parkinglots").header("Authorization", "Bearer " + CLERK_JWT)
+        mvc.perform(post("/parkinglots").header("Authorization", "Bearer " + ADMIN_JWT)
                 .contentType(MediaType.APPLICATION_JSON).content(oldJson)).andReturn();
         String lotJson = "{\"parkingLotName\":\"Lot3\",\"capacity\":1}";
 
         //w
         Long id = parkingLotRepository.findAll().get(0).getId();
-        MvcResult result = mvc.perform(put("/parkinglots/"+id).header("Authorization", "Bearer " + CLERK_JWT)
+        MvcResult result = mvc.perform(put("/parkinglots/"+id).header("Authorization", "Bearer " + ADMIN_JWT)
                 .contentType(MediaType.APPLICATION_JSON).content(lotJson)).andReturn();
 
         //t
@@ -96,27 +96,18 @@ public class ParkingLotTest {
     public void delete_lot_test() throws Exception{
         //g
         String oldJson = "{\"parkingLotName\":\"Old\",\"capacity\":10}";
-        mvc.perform(post("/parkinglots").header("Authorization", "Bearer " + CLERK_JWT)
+        mvc.perform(post("/parkinglots").header("Authorization", "Bearer " + ADMIN_JWT)
                 .contentType(MediaType.APPLICATION_JSON).content(oldJson)).andReturn();
 
         //w
         Long id = parkingLotRepository.findAll().get(0).getId();
-        MvcResult result = mvc.perform(delete("/parkinglots/"+id).header("Authorization", "Bearer " + CLERK_JWT)).andReturn();
+        MvcResult result = mvc.perform(delete("/parkinglots/"+id).header("Authorization", "Bearer " + ADMIN_JWT)).andReturn();
 
         //t
         assertEquals(200, result.getResponse().getStatus());
         Optional<ParkingLot> thisLot = parkingLotRepository.findById(id);
         assertFalse(thisLot.isPresent());
 
-    }
-
-    @Test
-    public void add_lot_with_invalid_capacity_test() throws Exception
-    {
-        String oldJson = "{\"parkingLotName\":\"err\",\"capacity\":0}";
-        MvcResult result = mvc.perform(post("/parkinglots").header("Authorization", "Bearer " + CLERK_JWT)
-                .contentType(MediaType.APPLICATION_JSON).content(oldJson)).andReturn();
-        assertEquals(400, result.getResponse().getStatus());
     }
 
 

@@ -26,7 +26,7 @@ public class ParkingLotResource {
     private ParkingClerkRepository parkingClerkRepository;
 
     @GetMapping
-    @PreAuthorize("hasRole('CLERK')")
+    @PreAuthorize("hasRole('CLERK') or hasRole('ADMIN') or hasRole('MANAGER')")
     public ResponseEntity<ParkingLotResponse[]> getAll(){
         final ParkingLotResponse[] lots = parkingLotRepository.findAll().stream()
                 .map(ParkingLotResponse::create)
@@ -35,7 +35,7 @@ public class ParkingLotResource {
     }
 
     @GetMapping(value = "/{id}")
-    @PreAuthorize("hasRole('CLERK')")
+    @PreAuthorize("hasRole('CLERK') or hasRole('ADMIN') or hasRole('MANAGER')")
     public ResponseEntity<ParkingLotResponse> getById(@PathVariable Long id){
         final Optional<ParkingLot> parkingLot = parkingLotRepository.findById(id);
         if (!parkingLot.isPresent()){
@@ -45,19 +45,19 @@ public class ParkingLotResource {
     }
 
     @PostMapping(consumes = "application/json")
-    @PreAuthorize("hasRole('CLERK')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
     public ResponseEntity add(@RequestBody ParkingLot lot){
         lot.setAvailablePositionCount(lot.getCapacity());
         if (!lot.isCapacityValid())
             return ResponseEntity.badRequest().header("Error", "ParkingLot capacity value is invalid!").build();
         if (!parkingLotRepository.findByparkingLotName(lot.getParkingLotName()).isEmpty())
             return ResponseEntity.badRequest().header("Error", "ParkingLot name already exist!").build();
-        lot.setStatus("open");
         parkingLotRepository.save(lot);
         return ResponseEntity.created(URI.create("/parkinglots/"+lot.getId())).build();
     }
 
     @PutMapping(value = "/{id}", consumes = "application/json")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
     public ResponseEntity<ParkingLot> update(@RequestBody ParkingLot lot, @PathVariable Long id)
     {
         Optional<ParkingLot> thisLot = parkingLotRepository.findById(id);
@@ -75,7 +75,7 @@ public class ParkingLotResource {
     }
 
     @DeleteMapping(value = "/{id}")
-    @PreAuthorize("hasRole('CLERK')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
     public ResponseEntity delete(@PathVariable Long id)
     {
         Optional<ParkingLot> thisLot = parkingLotRepository.findById(id);
@@ -86,8 +86,8 @@ public class ParkingLotResource {
     }
 
     @PatchMapping(value = "/{id}", consumes = "application/json")
-    @PreAuthorize("hasRole('CLERK')")
-    public ResponseEntity<ParkingLotResponse> updateOrder(@RequestBody ParkingLot lot, @PathVariable Long id)
+    @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
+    public ResponseEntity<ParkingLotResponse> updateLot(@RequestBody ParkingLot lot, @PathVariable Long id)
     {
         Optional<ParkingLot> thisLot = parkingLotRepository.findById(id);
         if (!thisLot.isPresent()) {
@@ -102,13 +102,7 @@ public class ParkingLotResource {
         }
         if (lot.getEmployeeId() != null) originLot.setEmployeeId(lot.getEmployeeId());
         if (lot.getParkingLotName() != null) originLot.setParkingLotName(lot.getParkingLotName());
-        if (lot.getStatus() != null)
-        {
-            if (originLot.checkStatusValid())
-                originLot.setStatus(lot.getStatus());
-            else
-                return ResponseEntity.badRequest().header("Error", "Parking Lot is assigned to a parking clerk or contains car").build();
-        }
+        if (lot.getStatus() != null) originLot.setStatus(lot.getStatus());
         parkingLotRepository.saveAndFlush(originLot);
         return ResponseEntity.ok().build();
     }

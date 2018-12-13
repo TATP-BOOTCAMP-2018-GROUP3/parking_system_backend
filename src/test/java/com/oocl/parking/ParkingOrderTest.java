@@ -29,6 +29,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @AutoConfigureMockMvc
 public class ParkingOrderTest {
 
+    private static final String CLERK_JWT = "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiQ0xFUksiLCJpZCI6MSwidXNlcm5hbWUiOiJjbGVyayIsImV4cCI6MTU0NTAzNzgzOH0.sWgx_dU0jx5_MOtGbC_1sgaX92HNJJFllIL9Ff6Q4Q0";
+
     @Autowired
     private ParkingOrderRepository parkingOrderRepository;
 
@@ -52,7 +54,9 @@ public class ParkingOrderTest {
         ParkingOrder order = new ParkingOrder("Car1", lot.getId(), "12345678");
         parkingOrderRepository.saveAndFlush(order);
         //w
-        final MvcResult result = mvc.perform(get("/parkingorders")).andReturn();
+        final MvcResult result = mvc.perform(get("/parkingorders")
+                                .header("Authorization", "Bearer " + CLERK_JWT))
+                                .andReturn();
         //t
         assertEquals(200, result.getResponse().getStatus());
         final ParkingOrderResponse[] responses = getContentAsObject(result, ParkingOrderResponse[].class);
@@ -84,7 +88,9 @@ public class ParkingOrderTest {
         String orderJson = "{\"carId\":\"Car3\",\"parkingLotId\":"+lot.getId()+", \"phoneNumber\":\"12345678\"}";
         //w
         final MvcResult result = mvc.perform(post("/parkingorders")
-                .contentType(MediaType.APPLICATION_JSON).content(orderJson)).andReturn();
+                                .header("Authorization", "Bearer " + CLERK_JWT)
+                                .contentType(MediaType.APPLICATION_JSON).content(orderJson))
+                                .andReturn();
 
         //t
         assertEquals(201, result.getResponse().getStatus());
@@ -124,17 +130,21 @@ public class ParkingOrderTest {
         mvc.perform(post("/parkingorders")
                 .contentType(MediaType.APPLICATION_JSON).content(orderJson)).andReturn();
         Long id = parkingOrderRepository.findAll().get(0).getId();
+        orderJson = "{\"carId\":\"Car3\",\"parkingLotId\":\"1\", \"phoneNumber\":\"12345678\", \"status\": \"In Progress\"}";
         final MvcResult result = mvc.perform(put("/parkingorders/"+id)
-                .contentType(MediaType.APPLICATION_JSON).content(orderJson)).andReturn();
+                                .header("Authorization", "Bearer " + CLERK_JWT)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(orderJson))
+                                .andReturn();
 
-                //t
+        //t
         assertEquals("In Progress", parkingOrderRepository.findAll().get(0).getStatus());
         //assertEquals("Car3", parkingOrderRepository.findAll().get(0).getCarId());
 
     }
 
     @Test
-    public void should_get_badrequest_when_duplicate_grab_order() throws Exception{
+    public void should_get_badRequest_when_duplicate_grab_order() throws Exception{
         //g
         ParkingLot lot = new ParkingLot("Lot", 10);
         parkingLotRepository.saveAndFlush(lot);
@@ -143,10 +153,17 @@ public class ParkingOrderTest {
         mvc.perform(post("/parkingorders")
                 .contentType(MediaType.APPLICATION_JSON).content(orderJson)).andReturn();
         Long id = parkingOrderRepository.findAll().get(0).getId();
+        orderJson = "{\"carId\":\"Car3\",\"parkingLotId\":\"1\", \"phoneNumber\":\"12345678\", \"status\": \"In Progress\"}";
         mvc.perform(put("/parkingorders/"+id)
-                .contentType(MediaType.APPLICATION_JSON).content(orderJson)).andReturn();
+                    .header("Authorization", "Bearer " + CLERK_JWT)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(orderJson))
+                    .andReturn();
         final MvcResult result = mvc.perform(put("/parkingorders/"+id)
-                .contentType(MediaType.APPLICATION_JSON).content(orderJson)).andReturn();
+                                .header("Authorization", "Bearer " + CLERK_JWT)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(orderJson))
+                                .andReturn();
 
         //t
         assertEquals(400, result.getResponse().getStatus());
