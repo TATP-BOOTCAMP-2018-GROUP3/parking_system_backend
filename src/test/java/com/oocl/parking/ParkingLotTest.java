@@ -134,6 +134,58 @@ public class ParkingLotTest {
         assertEquals(400, result.getResponse().getStatus());
 
     }
-
+    @Test
+    public void patch_lot_test() throws Exception
+    {
+        ParkingLot lot = new ParkingLot("Old", 10);
+        parkingLotRepository.saveAndFlush(lot);
+        String lotJson = "{\"parkingLotName\":\"New\",\"capacity\":5}";
+        final MvcResult result = mvc.perform(patch("/parkinglots/"+lot.getId())
+                .header("Authorization", "Bearer " + ADMIN_JWT)
+                .contentType(MediaType.APPLICATION_JSON).content(lotJson))
+                .andReturn();
+        assertEquals(200, result.getResponse().getStatus());
+        assertEquals("New", parkingLotRepository.findAll().get(0).getParkingLotName());
+        assertEquals(5, parkingLotRepository.findAll().get(0).getCapacity());
+    }
+    @Test
+    public void patch_lot_status_test() throws Exception
+    {
+        ParkingLot lot = new ParkingLot("lot1", 10);
+        String lotJson = "{\"status\":\"close\"}";
+        parkingLotRepository.saveAndFlush(lot);
+        final MvcResult result = mvc.perform(patch("/parkinglots/"+lot.getId())
+                .header("Authorization", "Bearer " + ADMIN_JWT)
+                .contentType(MediaType.APPLICATION_JSON).content(lotJson))
+                .andReturn();
+        assertEquals(200, result.getResponse().getStatus());
+        assertEquals("close", parkingLotRepository.findAll().get(0).getStatus());
+    }
+    @Test
+    public void patch_lot_status_with_employee_id_test() throws Exception
+    {
+        ParkingLot lot = new ParkingLot("lot",10);
+        lot.setEmployeeId(1L);
+        parkingLotRepository.saveAndFlush(lot);
+        String lotJson = "{\"status\":\"close\"}";
+        final MvcResult result = mvc.perform(patch("/parkinglots/"+lot.getId())
+                .header("Authorization", "Bearer " + ADMIN_JWT)
+                .contentType(MediaType.APPLICATION_JSON).content(lotJson))
+                .andReturn();
+        assertEquals(400, result.getResponse().getStatus());
+    }
+    @Test
+    public void patch_lot_status_with_car_test() throws Exception
+    {
+        ParkingLot lot = new ParkingLot("lot", 10);
+        lot.setAvailablePositionCount(9);
+        parkingLotRepository.saveAndFlush(lot);
+        String lotJson = "{\"status\":\"close\"}";
+        final MvcResult result = mvc.perform(patch("/parkinglots/"+lot.getId())
+                .header("Authorization", "Bearer " + ADMIN_JWT)
+                .contentType(MediaType.APPLICATION_JSON).content(lotJson))
+                .andReturn();
+        assertEquals(400, result.getResponse().getStatus());
+    }
 
 }
