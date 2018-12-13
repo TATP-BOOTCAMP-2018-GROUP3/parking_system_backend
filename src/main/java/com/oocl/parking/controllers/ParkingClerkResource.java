@@ -5,11 +5,10 @@ import com.oocl.parking.domain.ParkingClerk;
 import com.oocl.parking.domain.ParkingLot;
 import com.oocl.parking.domain.ParkingOrder;
 import com.oocl.parking.models.ParkingClerkResponse;
+import com.oocl.parking.models.ParkingLotResponse;
 import com.oocl.parking.models.ParkingOrderResponse;
-import com.oocl.parking.repositories.EmployeeRepository;
-import com.oocl.parking.repositories.ParkingClerkRepository;
-import com.oocl.parking.repositories.ParkingLotRepository;
-import com.oocl.parking.repositories.ParkingOrderRepository;
+import com.oocl.parking.models.ReturnOrderResponse;
+import com.oocl.parking.repositories.*;
 import com.oocl.parking.utils.EmployeeUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.Optional;
 
 @RestController
@@ -34,6 +34,9 @@ public class ParkingClerkResource {
 
     @Autowired
     private ParkingLotRepository parkingLotRepository;
+
+    @Autowired
+    private ReturnOrderRepository returnOrderRepository;
 
     ParkingLot getParkingLotByParkingOrder(ParkingOrder parkingOrder){
         ParkingLot parkingLot = null;
@@ -92,14 +95,77 @@ public class ParkingClerkResource {
 
     @GetMapping(path="/{id}/parkingorders")
     @PreAuthorize("hasRole('CLERK') or hasRole('ADMIN') or hasRole('MANAGER')")
-    public ResponseEntity<ParkingOrderResponse[]> getOwnedParkingLot(@PathVariable Long id) {
+    public ResponseEntity<ParkingOrderResponse[]> getOwnedParkingOrders(@PathVariable Long id) {
         final Optional<Employee> e = employeeRepository.findById(id);
         if (!e.isPresent()){
             return ResponseEntity.notFound().build();
         }
-        final ParkingOrderResponse[] orders = parkingOrderRepository.findByOwnedByEmployeeId(id).stream()
+        final ParkingClerk parkingClerk = parkingClerkRepository.findByEmployee(e.get());
+        if (parkingClerk == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        final ParkingOrderResponse[] orders = parkingOrderRepository.findByOwnedByEmployeeId(parkingClerk.getId()).stream()
                 .map(parkingOrder -> ParkingOrderResponse.create(parkingOrder, getParkingLotByParkingOrder(parkingOrder)))
                 .toArray(ParkingOrderResponse[]::new);
+        return ResponseEntity.ok(orders);
+    }
+
+    @GetMapping(path="/{id}/parkinglots")
+    @PreAuthorize("hasRole('CLERK')")
+    public ResponseEntity<ParkingLotResponse[]> getOwnedParkingLots(@PathVariable Long id) {
+        final Optional<Employee> e = employeeRepository.findById(id);
+        if (!e.isPresent()){
+            return ResponseEntity.notFound().build();
+        }
+        final ParkingClerk parkingClerk = parkingClerkRepository.findByEmployee(e.get());
+        if (parkingClerk == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        final ParkingLotResponse[] lots = parkingLotRepository.findByEmployeeId(parkingClerk.getId()).stream()
+                .map(ParkingLotResponse::create)
+                .toArray(ParkingLotResponse[]::new);
+        return ResponseEntity.ok(lots);
+    }
+
+
+    @PostMapping(path="/{id}/parkingorders", consumes = "application/json")
+    @PreAuthorize("hasRole('CLERK') or hasRole('ADMIN') or hasRole('MANAGER')")
+    public ResponseEntity grabParkingOrder(@PathVariable Long id, @RequestBody ParkingOrder order) {
+        final Optional<Employee> e = employeeRepository.findById(id);
+        if (!e.isPresent()){
+            return ResponseEntity.notFound().build();
+        }
+        final ParkingClerk parkingClerk = parkingClerkRepository.findByEmployee(e.get());
+        if (parkingClerk == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        final Optional<ParkingOrder> originOrder = parkingOrderRepository.findById(order.getId());
+        if (!originOrder.isPresent())
+            return ResponseEntity.notFound().header("Error","Parking Order not found").build();
+        if ((order.getStatus().equals("In Progress"))&&!(originOrder.get().getStatus().equals("Pending")))
+            return ResponseEntity.badRequest().header("Error", "Parking order is not available to grab").build();
+        order.setOwnedByEmployeeId(parkingClerk.getId());
+        parkingOrderRepository.saveAndFlush(order);
+        return ResponseEntity.created(URI.create("/orders/"+order.getId())).header("Access-Control-Expose-Headers", "Location").build();
+    }
+
+    @GetMapping(path="/{id}/returnorders")
+    @PreAuthorize("hasRole('CLERK') or hasRole('ADMIN') or hasRole('MANAGER')")
+    public ResponseEntity<ReturnOrderResponse[]> getOwnedReturnOrders(@PathVariable Long id) {
+        final Optional<Employee> e = employeeRepository.findById(id);
+        if (!e.isPresent()){
+            return ResponseEntity.notFound().build();
+        }
+        final ParkingClerk parkingClerk = parkingClerkRepository.findByEmployee(e.get());
+        if (parkingClerk == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        final ReturnOrderResponse[] orders = returnOrderRepository.findByOwnedEmployeeId(parkingClerk.getId()).stream()
+                .map(returnOrder -> {
+                    ParkingOrder parkingOrder = parkingOrderRepository.getOne(returnOrder.getParkingOrderId());
+                    return ReturnOrderResponse.create(returnOrder, parkingOrder, getParkingLotByParkingOrder(parkingOrder));
+                })
+                .toArray(ReturnOrderResponse[]::new);
         return ResponseEntity.ok(orders);
     }
 

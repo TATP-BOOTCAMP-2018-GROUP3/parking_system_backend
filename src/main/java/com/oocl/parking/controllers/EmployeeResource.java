@@ -92,7 +92,8 @@ public class EmployeeResource {
         Employee insertEmployee = thisEmployee.get();
         if (employee.getAccountName() != null)
         {
-            if (!employeeRepository.findByAccountName(employee.getAccountName()).equals(thisEmployee))
+            Employee sameAccountNameEmployee = employeeRepository.findEmployeeByAccountName(employee.getAccountName());
+            if (sameAccountNameEmployee != null && !sameAccountNameEmployee.getId().equals(thisEmployee.get().getId()))
                 return ResponseEntity.badRequest().header("Error", "Account Name already exist").build();
             insertEmployee.setAccountName(employee.getAccountName());
         }

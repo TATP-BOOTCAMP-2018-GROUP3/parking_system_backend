@@ -1,8 +1,12 @@
 package com.oocl.parking.controllers;
 
+import com.oocl.parking.domain.Employee;
+import com.oocl.parking.domain.ParkingClerk;
 import com.oocl.parking.domain.ParkingLot;
 import com.oocl.parking.domain.ParkingOrder;
 import com.oocl.parking.models.ParkingOrderResponse;
+import com.oocl.parking.repositories.EmployeeRepository;
+import com.oocl.parking.repositories.ParkingClerkRepository;
 import com.oocl.parking.repositories.ParkingLotRepository;
 import com.oocl.parking.repositories.ParkingOrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +27,12 @@ public class ParkingOrderResource {
 
     @Autowired
     private ParkingLotRepository parkingLotRepository;
+
+    @Autowired
+    private EmployeeRepository employeeRepository;
+
+    @Autowired
+    private ParkingClerkRepository parkingClerkRepository;
 
     ParkingLot getParkingLotByParkingOrder(ParkingOrder parkingOrder){
         ParkingLot parkingLot = null;
@@ -89,7 +99,15 @@ public class ParkingOrderResource {
             parkingLot.setAvailablePositionCount(parkingLot.getAvailablePositionCount() - 1);
             parkingLotRepository.save(parkingLot);
         }
-        
+        final Optional<Employee> e = employeeRepository.findById(order.getOwnedByEmployeeId());
+        if (!e.isPresent()){
+            return ResponseEntity.notFound().build();
+        }
+        final ParkingClerk parkingClerk = parkingClerkRepository.findByEmployee(e.get());
+        if (parkingClerk == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        order.setOwnedByEmployeeId(parkingClerk.getId());
         parkingOrderRepository.save(order);
 
 
