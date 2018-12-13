@@ -22,7 +22,7 @@ public class EmployeeResource {
     private EmployeeRepository employeeRepository;
 
     @GetMapping
-    @PreAuthorize("hasRole('CLERK')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
     public ResponseEntity<EmployeeResponse[]> getAll()
     {
         final EmployeeResponse[] employees = employeeRepository.findAll().stream()
@@ -33,7 +33,7 @@ public class EmployeeResource {
     }
 
     @GetMapping(value = "/{id}")
-    @PreAuthorize("hasRole('CLERK')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
     public ResponseEntity<EmployeeResponse> getById(@PathVariable Long id)
     {
         final Optional<Employee> e = employeeRepository.findById(id);
@@ -44,7 +44,7 @@ public class EmployeeResource {
     }
 
     @PostMapping(consumes = "application/json")
-    @PreAuthorize("hasRole('CLERK')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
     public ResponseEntity add(@RequestBody Employee employee){
         if (employeeRepository.findByAccountName(employee.getAccountName()).size() > 0)
             return ResponseEntity.badRequest().header("Error", "Account Name already exist").build();
@@ -60,7 +60,7 @@ public class EmployeeResource {
     }
 
     @PutMapping(value = "/{id}", consumes = "application/json")
-    @PreAuthorize("hasRole('CLERK')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
     public ResponseEntity update(@RequestBody Employee employee, @PathVariable Long id){
 
         Optional<Employee> e = employeeRepository.findById(id);
@@ -72,7 +72,7 @@ public class EmployeeResource {
     }
 
     @DeleteMapping(value = "/{id}")
-    @PreAuthorize("hasRole('CLERK')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
     public ResponseEntity delete(@PathVariable Long id)
     {
         Optional<Employee> e = employeeRepository.findById(id);
@@ -83,7 +83,7 @@ public class EmployeeResource {
     }
 
     @PatchMapping(value = "/{id}", consumes = "application/json")
-    @PreAuthorize("hasRole('CLERK')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
     public ResponseEntity updatePatch(@RequestBody Employee employee, @PathVariable Long id)
     {
         Optional<Employee> thisEmployee = employeeRepository.findById(id);

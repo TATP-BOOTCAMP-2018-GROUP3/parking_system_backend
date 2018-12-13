@@ -29,6 +29,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @SpringBootTest
 @AutoConfigureMockMvc
 public class ParkingClerkTest {
+    private static final String ADMIN_JWT = "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiQURNSU4iLCJpZCI6MiwidXNlcm5hbWUiOiJhZG1pbiIsImV4cCI6MTU0NTExNDg4MX0.N-9HALvhp8-Ud8b3stkyetgBhtDLBcwZAxXDWkW-Els";
     private static final String RANDOM_PASSWORD = EmployeeUtil.generateRandomString(6);
     private static final String DUMMY_EMAIL = "dummy@email.com";
     private static final String DUMMY_PHONE_NUM = "12345678";
@@ -55,11 +56,16 @@ public class ParkingClerkTest {
     {
         //g
         Employee e = new Employee("Test1", DUMMY_EMAIL, DUMMY_PHONE_NUM);
+        e.setName(e.getAccountName());
+        e.setRole("CLERK");
+        e.setWorkingStatus("On Duty");
         e = EmployeeUtil.fillInEmployeePasswordInfo(e, RANDOM_PASSWORD);
         ParkingClerk clerk = new ParkingClerk(e);
         parkingClerkRepository.saveAndFlush(clerk);
         //w
-        final MvcResult result = mvc.perform(get("/parkingclerks")).andReturn();
+        final MvcResult result = mvc.perform(get("/parkingclerks")
+                                .header("Authorization", "Bearer " + ADMIN_JWT))
+                                .andReturn();
         //t
         assertEquals(200, result.getResponse().getStatus());
         final ParkingClerkResponse[] responses = getContentAsObject(result, ParkingClerkResponse[].class);
@@ -77,7 +83,9 @@ public class ParkingClerkTest {
                             " }";
         //w
         final MvcResult result = mvc.perform(post("/parkingclerks")
-        .contentType(MediaType.APPLICATION_JSON).content(clerkJson)).andReturn();
+                                .header("Authorization", "Bearer " + ADMIN_JWT)
+                                .contentType(MediaType.APPLICATION_JSON).content(clerkJson))
+                                .andReturn();
 
         //t
         assertEquals(201, result.getResponse().getStatus());
@@ -91,10 +99,28 @@ public class ParkingClerkTest {
         ParkingClerk clerk = new ParkingClerk(employee);
         parkingClerkRepository.saveAndFlush(clerk);
 
-        final MvcResult result = mvc.perform(delete("/parkingclerks/" + clerk.getId())).andReturn();
+        final MvcResult result = mvc.perform(delete("/parkingclerks/" + clerk.getId())
+                                .header("Authorization", "Bearer " + ADMIN_JWT))
+                                .andReturn();
 
         assertEquals(200, result.getResponse().getStatus());
         assertTrue(parkingClerkRepository.findAll().isEmpty());
         assertTrue(employeeRepository.findAll().isEmpty());
+    }
+
+    @Test
+    public void add_duplicate_account_name_clerk_test() throws Exception
+    {
+        Employee employee = new Employee("Test4", DUMMY_EMAIL, DUMMY_PHONE_NUM);
+        ParkingClerk clerk = new ParkingClerk(employee);
+        parkingClerkRepository.saveAndFlush(clerk);
+        String clerkJson = "{" +
+                "\"accountName\":\"Test4\"," +
+                "\"email\":\"" + DUMMY_EMAIL + "\"," +
+                "\"phoneNum\":\"" + DUMMY_PHONE_NUM + "\"" +
+                " }";
+        final MvcResult result = mvc.perform(post("/parkingclerks").header("Authorization", "Bearer " + ADMIN_JWT)
+                .content(clerkJson).contentType(MediaType.APPLICATION_JSON)).andReturn();
+        assertEquals(400, result.getResponse().getStatus());
     }
 }

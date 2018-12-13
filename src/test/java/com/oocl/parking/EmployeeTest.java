@@ -16,14 +16,15 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import static com.oocl.parking.WebTestUtil.getContentAsObject;
 import static junit.framework.Assert.assertEquals;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.junit.Assert.assertFalse;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
 @AutoConfigureMockMvc
 public class EmployeeTest {
 
+    private static final String ADMIN_JWT = "eyJhbGciOiJIUzI1NiJ9.eyJyb2xlIjoiQURNSU4iLCJpZCI6MiwidXNlcm5hbWUiOiJhZG1pbiIsImV4cCI6MTU0NTExNDg4MX0.N-9HALvhp8-Ud8b3stkyetgBhtDLBcwZAxXDWkW-Els";
 
     @Autowired
     private EmployeeRepository employeeRepository;
@@ -44,7 +45,9 @@ public class EmployeeTest {
         Employee e =new Employee("test1","Email1","123");
         employeeRepository.saveAndFlush(e);
 
-        final MvcResult result = mvc.perform(get("/employees")).andReturn();
+        final MvcResult result = mvc.perform(get("/employees")
+                                .header("Authorization", "Bearer " + ADMIN_JWT))
+                                .andReturn();
 
         assertEquals(200, result.getResponse().getStatus());
 
@@ -60,7 +63,9 @@ public class EmployeeTest {
     {
         Employee e = new Employee("test2", "email2", "123");
         employeeRepository.saveAndFlush(e);
-        final MvcResult result = mvc.perform(get("/employees/"+e.getId())).andReturn();
+        final MvcResult result = mvc.perform(get("/employees/"+e.getId())
+                                .header("Authorization", "Bearer " + ADMIN_JWT))
+                                .andReturn();
         assertEquals(200, result.getResponse().getStatus());
         final EmployeeResponse responses = getContentAsObject(result, EmployeeResponse.class);
         assertEquals("test2", responses.getAccountName());
@@ -78,11 +83,62 @@ public class EmployeeTest {
                 " }";
         //w
         final MvcResult result = mvc.perform(post("/employees")
-                .contentType(MediaType.APPLICATION_JSON).content(employeeJson)).andReturn();
+                                .header("Authorization", "Bearer " + ADMIN_JWT)
+                                .contentType(MediaType.APPLICATION_JSON).content(employeeJson)).andReturn();
 
         //t
         assertEquals(201, result.getResponse().getStatus());
         assertEquals("Test3", employeeRepository.findAll().get(0).getAccountName());
     }
+
+    @Test
+    public void patch_employee_test() throws Exception
+    {
+        String employeeJson = "{" +
+                "\"name\":\"myname3\"," +
+                "\"accountName\":\"Test3\"," +
+                "\"email\":\"email3\"," +
+                "\"phoneNum\":\"123\"" +
+                " }";
+        mvc.perform(post("/employees").header("Authorization", "Bearer " + ADMIN_JWT)
+                .contentType(MediaType.APPLICATION_JSON).content(employeeJson)).andReturn();
+        String patchJson = "{" +
+                "\"name\":\"updateName\"" +
+                " }";
+        final MvcResult result = mvc.perform(patch("/employees/"+employeeRepository.findAll().get(0).getId())
+                                .header("Authorization", "Bearer " + ADMIN_JWT)
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(patchJson))
+                                .andReturn();
+        assertEquals(200, result.getResponse().getStatus());
+        assertEquals("updateName", employeeRepository.findAll().get(0).getName());
+    }
+    @Test
+    public void patch_employee_with_exist_account_name_test() throws Exception
+    {
+        Employee e1 = new Employee("AccountName1", "email", "phonenum");
+        Employee e2 = new Employee("AccountName2", "email", "phonenum");
+        employeeRepository.saveAndFlush(e1);
+        employeeRepository.saveAndFlush(e2);
+        String patchJson = "{" +
+                "\"accountName\":\"AccountName2\"" +
+                " }";
+        final MvcResult result = mvc.perform(patch("/employees/"+employeeRepository.findAll().get(0).getId())
+                .header("Authorization", "Bearer " + ADMIN_JWT).contentType(MediaType.APPLICATION_JSON).content(patchJson)).andReturn();
+        assertEquals(400, result.getResponse().getStatus());
+        assertEquals("AccountName1", employeeRepository.findAll().get(0).getAccountName());
+    }
+    @Test
+    public void delete_employee_by_id_test() throws Exception
+    {
+        employeeRepository.saveAndFlush(new Employee("Delete1", "email", "phonenum"));
+        Long id = employeeRepository.findAll().get(0).getId();
+        final MvcResult result = mvc.perform(delete("/employees/"+id)
+                                 .header("Authorization", "Bearer " + ADMIN_JWT))
+                                .andReturn();
+        assertEquals(200, result.getResponse().getStatus());
+        assertFalse(employeeRepository.existsById(id));
+    }
+
 
 }

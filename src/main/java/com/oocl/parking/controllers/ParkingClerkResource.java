@@ -47,7 +47,7 @@ public class ParkingClerkResource {
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('CLERK')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
     public ResponseEntity<ParkingClerkResponse[]> getAll(){
         final ParkingClerkResponse[] clerks = parkingClerkRepository.findAll().stream()
                 .map(ParkingClerkResponse::create)
@@ -56,7 +56,7 @@ public class ParkingClerkResource {
     }
 
     @GetMapping(value = "/{id}")
-    @PreAuthorize("hasRole('CLERK')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
     public ResponseEntity<ParkingClerkResponse> getById(@PathVariable Long id){
         final Optional<ParkingClerk> parkingClerk = parkingClerkRepository.findById(id);
         if (!parkingClerk.isPresent()){
@@ -66,7 +66,7 @@ public class ParkingClerkResource {
     }
 
     @PostMapping(consumes = "application/json")
-    @PreAuthorize("hasRole('CLERK')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
     public ResponseEntity add(@RequestBody Employee employee){
         if (employeeRepository.findByAccountName(employee.getAccountName()).size() > 0)
             return ResponseEntity.badRequest().header("Error", "Account Name already exist").build();
@@ -84,14 +84,14 @@ public class ParkingClerkResource {
     }
 
     @DeleteMapping(value = "/{id}")
-    @PreAuthorize("hasRole('CLERK')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
     public ResponseEntity remove(@PathVariable Long id){
         parkingClerkRepository.deleteById(id);
         return ResponseEntity.ok().build();
     }
 
     @GetMapping(path="/{id}/parkingorders")
-    @PreAuthorize("hasRole('CLERK')")
+    @PreAuthorize("hasRole('CLERK') or hasRole('ADMIN') or hasRole('MANAGER')")
     public ResponseEntity<ParkingOrderResponse[]> getOwnedParkingLot(@PathVariable Long id) {
         final Optional<Employee> e = employeeRepository.findById(id);
         if (!e.isPresent()){
@@ -101,5 +101,20 @@ public class ParkingClerkResource {
                 .map(parkingOrder -> ParkingOrderResponse.create(parkingOrder, getParkingLotByParkingOrder(parkingOrder)))
                 .toArray(ParkingOrderResponse[]::new);
         return ResponseEntity.ok(orders);
+    }
+
+    @PatchMapping(path="/{id}")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('MANAGER')")
+    public ResponseEntity updatePatch(@RequestBody ParkingClerk clerk, @PathVariable Long id) {
+        final Optional<ParkingClerk> parkingClerk = parkingClerkRepository.findById(id);
+        if (!parkingClerk.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+        ParkingClerk thisClerk = parkingClerk.get();
+        if (clerk.getParkingStatus() != null) {
+            thisClerk.setParkingStatus(clerk.getParkingStatus());
+        }
+        parkingClerkRepository.saveAndFlush(thisClerk);
+        return ResponseEntity.ok().build();
     }
 }

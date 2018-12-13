@@ -36,7 +36,7 @@ public class ParkingOrderResource {
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('CLERK')")
+    @PreAuthorize("hasRole('CLERK') or hasRole('ADMIN') or hasRole('MANAGER')")
     public ResponseEntity<ParkingOrderResponse[]> getAll() {
         final ParkingOrderResponse[] orders = parkingOrderRepository.findAll().stream()
                 .map(parkingOrder -> ParkingOrderResponse.create(parkingOrder, getParkingLotByParkingOrder(parkingOrder)))
@@ -56,7 +56,7 @@ public class ParkingOrderResource {
     }
 
     @GetMapping(params = "status")
-    @PreAuthorize("hasRole('CLERK')")
+    @PreAuthorize("hasRole('CLERK') or hasRole('ADMIN') or hasRole('MANAGER')")
     public ResponseEntity<ParkingOrderResponse[]> getByStatus(@RequestParam String status)
     {
         final ParkingOrderResponse[] orders = parkingOrderRepository.findByStatus(status).stream()
@@ -72,7 +72,7 @@ public class ParkingOrderResource {
     }
 
     @PutMapping(value = "/{id}", consumes = "application/json")
-    @PreAuthorize("hasRole('CLERK')")
+    @PreAuthorize("hasRole('CLERK') or hasRole('ADMIN') or hasRole('MANAGER')")
     public ResponseEntity<ParkingOrder> updateOrder(@RequestBody ParkingOrder order, @PathVariable Long id)
     {
         Optional<ParkingOrder> thisOrder = parkingOrderRepository.findById(id);
