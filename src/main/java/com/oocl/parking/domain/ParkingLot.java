@@ -111,7 +111,8 @@ public class ParkingLot {
     }
 
     public boolean checkStatusValid() {
-        if (!getEmployeeId().equals(null))
+
+        if (getEmployeeId()!=null)
             return false;
         if (getAvailablePositionCount()!=getCapacity())
             return false;
