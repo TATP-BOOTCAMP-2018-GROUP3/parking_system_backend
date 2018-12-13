@@ -99,7 +99,11 @@ public class ParkingClerkResource {
         if (!e.isPresent()){
             return ResponseEntity.notFound().build();
         }
-        final ParkingOrderResponse[] orders = parkingOrderRepository.findByOwnedByEmployeeId(id).stream()
+        final ParkingClerk parkingClerk = parkingClerkRepository.findByEmployee(e.get());
+        if (parkingClerk == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        final ParkingOrderResponse[] orders = parkingOrderRepository.findByOwnedByEmployeeId(parkingClerk.getId()).stream()
                 .map(parkingOrder -> ParkingOrderResponse.create(parkingOrder, getParkingLotByParkingOrder(parkingOrder)))
                 .toArray(ParkingOrderResponse[]::new);
         return ResponseEntity.ok(orders);
