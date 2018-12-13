@@ -101,6 +101,7 @@ public class ParkingLotResource {
         }
         if (lot.getEmployeeId() != null) originLot.setEmployeeId(lot.getEmployeeId());
         if (lot.getParkingLotName() != null) originLot.setParkingLotName(lot.getParkingLotName());
+        if (lot.getStatus() != null) originLot.setStatus(lot.getStatus());
         parkingLotRepository.saveAndFlush(originLot);
         return ResponseEntity.ok().build();
     }

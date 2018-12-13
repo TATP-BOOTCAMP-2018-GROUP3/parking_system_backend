@@ -34,13 +34,24 @@ public class ParkingLot {
     @Column(name = "employee_id")
     private Long employeeId;
 
-    public ParkingLot(){}
+    @Column(name = "status")
+    private String status;
+
+    public ParkingLot(){this.status = "open";}
 
     public ParkingLot(String name, int capacity)
     {
         this.parkingLotName = name;
         this.capacity = capacity;
         this.availablePositionCount = capacity;
+        this.status = "open";
+    }
+    public ParkingLot(String name, int capacity, String status)
+    {
+        this.parkingLotName = name;
+        this.capacity = capacity;
+        this.availablePositionCount = capacity;
+        this.status = status;
     }
 
 
@@ -90,6 +101,14 @@ public class ParkingLot {
 
     public void setClerk(ParkingClerk clerk) {
         this.clerk = clerk;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }
 

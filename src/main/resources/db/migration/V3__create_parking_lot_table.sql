@@ -4,6 +4,7 @@ create table parking_lot(
     capacity int not null,
     available_position_count int,
     employee_id bigint,
+    status varchar(64),
     primary key(id)
 
 )

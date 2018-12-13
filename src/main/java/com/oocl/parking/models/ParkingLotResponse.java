@@ -18,6 +18,8 @@ public class ParkingLotResponse {
 
     private Long employeeId;
 
+    private String status;
+
     public Long getId() {
         return id;
     }
@@ -58,7 +60,7 @@ public class ParkingLotResponse {
         this.employeeId = employeeId;
     }
 
-    private static ParkingLotResponse create(Long id, String name, int capacity, int posCount, Long employee_id){
+    private static ParkingLotResponse create(Long id, String name, int capacity, int posCount, Long employee_id, String status){
         Objects.requireNonNull(id);
         Objects.requireNonNull(name);
         Objects.requireNonNull(capacity);
@@ -68,11 +70,20 @@ public class ParkingLotResponse {
         response.setAvailablePositionCount(posCount);
         response.setParkingLotName(name);
         response.setEmployeeId(employee_id);
+        response.setStatus(status);
         return response;
 
     }
     public static ParkingLotResponse create(ParkingLot entity)
     {
-        return create(entity.getId(), entity.getParkingLotName(), entity.getCapacity(), entity.getAvailablePositionCount(), entity.getEmployeeId());
+        return create(entity.getId(), entity.getParkingLotName(), entity.getCapacity(), entity.getAvailablePositionCount(), entity.getEmployeeId(), entity.getStatus());
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }
