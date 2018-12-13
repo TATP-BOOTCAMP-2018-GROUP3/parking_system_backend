@@ -41,7 +41,7 @@ public class ReturnOrderResource {
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('CLERK')")
+    @PreAuthorize("hasRole('CLERK') or hasRole('ADMIN') or hasRole('MANAGER')")
     public ResponseEntity<ReturnOrderResponse[]> getAll() {
         final ReturnOrderResponse[] orders = returnOrderRepository.findAll().stream()
                 .map(returnOrder -> {
@@ -68,7 +68,7 @@ public class ReturnOrderResource {
     }
 
     @GetMapping(params = "status")
-    @PreAuthorize("hasRole('CLERK')")
+    @PreAuthorize("hasRole('CLERK') or hasRole('ADMIN') or hasRole('MANAGER')")
     public ResponseEntity<ReturnOrderResponse[]> getByStatus(@RequestParam String status)
     {
         final ReturnOrderResponse[] orders = returnOrderRepository.findByStatus(status).stream()
@@ -91,7 +91,7 @@ public class ReturnOrderResource {
     }
 
     @PatchMapping(value = "/{id}", consumes = "application/json")
-    @PreAuthorize("hasRole('CLERK')")
+    @PreAuthorize("hasRole('CLERK') or hasRole('ADMIN') or hasRole('MANAGER')")
     public ResponseEntity<ReturnOrderResponse> updateOrder(@RequestBody ReturnOrder order, @PathVariable Long id)
     {
         Optional<ReturnOrder> thisOrder = returnOrderRepository.findById(id);

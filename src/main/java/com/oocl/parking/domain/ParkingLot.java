@@ -37,13 +37,14 @@ public class ParkingLot {
     @Column(name = "status")
     private String status;
 
-    public ParkingLot(){}
+    public ParkingLot(){this.status = "open";}
 
     public ParkingLot(String name, int capacity)
     {
         this.parkingLotName = name;
         this.capacity = capacity;
         this.availablePositionCount = capacity;
+        this.status = "open";
     }
     public ParkingLot(String name, int capacity, String status)
     {
@@ -108,15 +109,6 @@ public class ParkingLot {
 
     public void setStatus(String status) {
         this.status = status;
-    }
-
-    public boolean checkStatusValid() {
-
-        if (getEmployeeId()!=null)
-            return false;
-        if (getAvailablePositionCount()!=getCapacity())
-            return false;
-        return true;
     }
 }
 
