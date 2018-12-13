@@ -3,7 +3,6 @@ package com.oocl.parking.controllers;
 
 import com.oocl.parking.domain.ParkingClerk;
 import com.oocl.parking.domain.ParkingLot;
-import com.oocl.parking.domain.ParkingOrder;
 import com.oocl.parking.models.ParkingLotResponse;
 import com.oocl.parking.repositories.ParkingClerkRepository;
 import com.oocl.parking.repositories.ParkingLotRepository;
@@ -50,7 +49,7 @@ public class ParkingLotResource {
         lot.setAvailablePositionCount(lot.getCapacity());
         if (!lot.isCapacityValid())
             return ResponseEntity.badRequest().header("Error", "ParkingLot capacity value is invalid!").build();
-        if (!parkingLotRepository.findByparkingLotName(lot.getParkingLotName()).isEmpty())
+        if (!parkingLotRepository.findByParkingLotName(lot.getParkingLotName()).isEmpty())
             return ResponseEntity.badRequest().header("Error", "ParkingLot name already exist!").build();
         lot.setStatus("open");
         parkingLotRepository.save(lot);
